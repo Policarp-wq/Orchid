@@ -11,3 +11,4 @@
 - Build and run the affected project after each implementation task when the environment supports it.
 - The repository is shared between Windows and WSL. Do not change the host-specific output paths in `Directory.Build.props`; Windows uses `bin/Windows` and `obj/Windows`, while WSL uses `bin/Linux` and `obj/Linux`.
 - Run MIDI device detection on Windows or macOS. The current DryWetMidi live input implementation does not enumerate devices on Linux/WSL.
+- Never commit or push code directly to `main`. Work on a dedicated branch and merge changes through a pull request after required checks pass.
