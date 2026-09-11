@@ -1,0 +1,10 @@
+<Project>
+  <PropertyGroup>
+    <OrchidBuildHost Condition="'$(OS)' == 'Windows_NT'">Windows</OrchidBuildHost>
+    <OrchidBuildHost Condition="'$(OrchidBuildHost)' == ''">Linux</OrchidBuildHost>
+    <MSBuildProjectExtensionsPath>obj/$(OrchidBuildHost)/</MSBuildProjectExtensionsPath>
+    <BaseIntermediateOutputPath>obj/$(OrchidBuildHost)/</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin/$(OrchidBuildHost)/</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**</DefaultItemExcludes>
+  </PropertyGroup>
+</Project>
