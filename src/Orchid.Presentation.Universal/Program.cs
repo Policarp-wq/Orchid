@@ -45,6 +45,7 @@ if (!int.TryParse(Console.ReadLine(), out var selectedIndex) ||
 }
 
 using var selectedDevice = InputDevice.GetByName(devices[selectedIndex].Name);
+selectedDevice.SilentNoteOnPolicy = SilentNoteOnPolicy.NoteOff;
 using var cancellationSource = new CancellationTokenSource();
 var outputLock = new object();
 var pressedNotes = new Dictionary<(int Channel, int NoteNumber), DateTimeOffset>();
@@ -66,34 +67,45 @@ Console.CancelKeyPress += (_, eventArgs) =>
     cancellationSource.Cancel();
 };
 
-selectedDevice.EventReceived += (_, eventArgs) =>
+selectedDevice.EventReceived += OnMidiEventReceived;
+
+void OnMidiEventReceived(object? sender, MidiEventReceivedEventArgs eventArgs)
 {
     var receivedAt = DateTimeOffset.UtcNow;
 
     lock (outputLock)
     {
-        switch (eventArgs.Event)
+        try
         {
-            case NoteOnEvent noteOnEvent when (int)noteOnEvent.Velocity > 0:
-                HandlePressedNote(noteOnEvent, receivedAt);
-                break;
-            case NoteOffEvent noteOffEvent:
-                HandleReleasedNote(
-                    (int)noteOffEvent.Channel,
-                    (int)noteOffEvent.NoteNumber,
-                    (int)noteOffEvent.Velocity,
-                    receivedAt);
-                break;
-            case NoteOnEvent noteOnEvent:
-                HandleReleasedNote(
-                    (int)noteOnEvent.Channel,
-                    (int)noteOnEvent.NoteNumber,
-                    releaseVelocity: 0,
-                    receivedAt);
-                break;
+            WriteLogLine(
+                $"{FormatTimestamp(receivedAt)} | Received | " +
+                $"{eventArgs.Event.GetType().Name} | {eventArgs.Event}");
+
+            HandleMidiEvent(eventArgs.Event, receivedAt);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine($"MIDI event processing failed: {exception}");
         }
     }
-};
+}
+
+void HandleMidiEvent(MidiEvent midiEvent, DateTimeOffset receivedAt)
+{
+    switch (midiEvent)
+    {
+        case NoteOnEvent noteOnEvent when (int)noteOnEvent.Velocity > 0:
+            HandlePressedNote(noteOnEvent, receivedAt);
+            break;
+        case NoteOffEvent noteOffEvent:
+            HandleReleasedNote(
+                (int)noteOffEvent.Channel,
+                (int)noteOffEvent.NoteNumber,
+                (int)noteOffEvent.Velocity,
+                receivedAt);
+            break;
+    }
+}
 
 try
 {
