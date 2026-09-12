@@ -9,6 +9,6 @@
 - Keep methods small and focused. Extract meaningful private methods instead of accumulating procedural logic in one method.
 - Do not introduce a new layer, service, interface, or abstraction without an explicit task requirement.
 - Build and run the affected project after each implementation task when the environment supports it.
-- The repository is shared between Windows and WSL. Do not change the host-specific output paths in `Directory.Build.props`; Windows uses `bin/Windows` and `obj/Windows`, while WSL uses `bin/Linux` and `obj/Linux`.
+- The repository is shared between Windows and WSL. Do not change the host-specific output paths in `Directory.Build.props`; Windows uses `bin/Windows` and `obj/Windows`, while WSL uses `/tmp/orchid-build` to avoid ownership conflicts on the WSL network share.
 - Run MIDI device detection on Windows or macOS. The current DryWetMidi live input implementation does not enumerate devices on Linux/WSL.
 - Never commit or push code directly to `main`. Work on a dedicated branch and merge changes through a pull request after required checks pass.
