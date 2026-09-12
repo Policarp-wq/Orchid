@@ -56,12 +56,14 @@ Directory.CreateDirectory(logDirectoryPath);
 
 var logFilePath = Path.Combine(
     logDirectoryPath,
-    $"midi-events-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}.log");
+    $"performance-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}.orchid");
 
 using var logWriter = new StreamWriter(logFilePath, append: false)
 {
     AutoFlush = true
 };
+var recordingStartedAt = DateTimeOffset.UtcNow;
+logWriter.WriteLine("ORCHID-PIANO-LOG 1");
 
 Console.CancelKeyPress += (_, eventArgs) =>
 {
@@ -81,7 +83,7 @@ void OnMidiEventReceived(object? sender, MidiEventReceivedEventArgs eventArgs)
         {
             if (isDebugLoggingEnabled)
             {
-                WriteLogLine(
+                Console.WriteLine(
                     $"{FormatTimestamp(receivedAt)} | Received | " +
                     $"{eventArgs.Event.GetType().Name} | {eventArgs.Event}");
             }
@@ -137,7 +139,7 @@ void HandlePressedNote(NoteOnEvent noteOnEvent, DateTimeOffset receivedAt)
 
     pressedNotes[(channel, noteNumber)] = receivedAt;
 
-    WriteLogLine(
+    Console.WriteLine(
         $"{FormatTimestamp(receivedAt)} | Pressed | {GetNoteName(noteNumber)} | " +
         $"Piano key {GetPianoKeyNumber(noteNumber)} | MIDI {noteNumber} | " +
         $"Channel {channel + 1} | Velocity {velocity}");
@@ -145,24 +147,30 @@ void HandlePressedNote(NoteOnEvent noteOnEvent, DateTimeOffset receivedAt)
 
 void HandleReleasedNote(int channel, int noteNumber, int releaseVelocity, DateTimeOffset receivedAt)
 {
-    var durationText = "unknown";
-
     if (pressedNotes.Remove((channel, noteNumber), out var pressedAt))
     {
-        durationText = $"{(receivedAt - pressedAt).TotalSeconds.ToString("0.000", CultureInfo.InvariantCulture)} s";
+        var startOffset = pressedAt - recordingStartedAt;
+        var duration = receivedAt - pressedAt;
+
+        logWriter.WriteLine(
+            $"NOTE {noteNumber} " +
+            $"{startOffset.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture)} " +
+            $"{duration.TotalMilliseconds.ToString("0", CultureInfo.InvariantCulture)}");
+
+        Console.WriteLine(
+            $"{FormatTimestamp(receivedAt)} | Released | {GetNoteName(noteNumber)} | " +
+            $"Piano key {GetPianoKeyNumber(noteNumber)} | MIDI {noteNumber} | " +
+            $"Channel {channel + 1} | Release velocity {releaseVelocity} | " +
+            $"Held {duration.TotalSeconds.ToString("0.000", CultureInfo.InvariantCulture)} s");
+
+        return;
     }
 
-    WriteLogLine(
+    Console.WriteLine(
         $"{FormatTimestamp(receivedAt)} | Released | {GetNoteName(noteNumber)} | " +
         $"Piano key {GetPianoKeyNumber(noteNumber)} | MIDI {noteNumber} | " +
         $"Channel {channel + 1} | Release velocity {releaseVelocity} | " +
-        $"Held {durationText}");
-}
-
-void WriteLogLine(string line)
-{
-    Console.WriteLine(line);
-    logWriter.WriteLine(line);
+        "Held unknown");
 }
 
 static string FormatTimestamp(DateTimeOffset timestamp)
