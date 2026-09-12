@@ -2,6 +2,8 @@
 using Melanchall.DryWetMidi.Core;
 using Melanchall.DryWetMidi.Multimedia;
 
+var isDebugLoggingEnabled = args.Contains("--debug", StringComparer.OrdinalIgnoreCase);
+
 if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
 {
     Console.WriteLine("Live MIDI device input is supported by DryWetMidi only on Windows and macOS.");
@@ -77,9 +79,12 @@ void OnMidiEventReceived(object? sender, MidiEventReceivedEventArgs eventArgs)
     {
         try
         {
-            WriteLogLine(
-                $"{FormatTimestamp(receivedAt)} | Received | " +
-                $"{eventArgs.Event.GetType().Name} | {eventArgs.Event}");
+            if (isDebugLoggingEnabled)
+            {
+                WriteLogLine(
+                    $"{FormatTimestamp(receivedAt)} | Received | " +
+                    $"{eventArgs.Event.GetType().Name} | {eventArgs.Event}");
+            }
 
             HandleMidiEvent(eventArgs.Event, receivedAt);
         }
@@ -134,7 +139,8 @@ void HandlePressedNote(NoteOnEvent noteOnEvent, DateTimeOffset receivedAt)
 
     WriteLogLine(
         $"{FormatTimestamp(receivedAt)} | Pressed | {GetNoteName(noteNumber)} | " +
-        $"MIDI {noteNumber} | Channel {channel + 1} | Velocity {velocity}");
+        $"Piano key {GetPianoKeyNumber(noteNumber)} | MIDI {noteNumber} | " +
+        $"Channel {channel + 1} | Velocity {velocity}");
 }
 
 void HandleReleasedNote(int channel, int noteNumber, int releaseVelocity, DateTimeOffset receivedAt)
@@ -148,7 +154,8 @@ void HandleReleasedNote(int channel, int noteNumber, int releaseVelocity, DateTi
 
     WriteLogLine(
         $"{FormatTimestamp(receivedAt)} | Released | {GetNoteName(noteNumber)} | " +
-        $"MIDI {noteNumber} | Channel {channel + 1} | Release velocity {releaseVelocity} | " +
+        $"Piano key {GetPianoKeyNumber(noteNumber)} | MIDI {noteNumber} | " +
+        $"Channel {channel + 1} | Release velocity {releaseVelocity} | " +
         $"Held {durationText}");
 }
 
@@ -170,4 +177,14 @@ static string GetNoteName(int noteNumber)
     var octave = (noteNumber / noteNames.Length) - 1;
 
     return $"{noteName}{octave}";
+}
+
+static string GetPianoKeyNumber(int noteNumber)
+{
+    const int firstPianoMidiNote = 21;
+    const int lastPianoMidiNote = 108;
+
+    return noteNumber is < firstPianoMidiNote or > lastPianoMidiNote
+        ? "N/A"
+        : (noteNumber - firstPianoMidiNote + 1).ToString(CultureInfo.InvariantCulture);
 }
