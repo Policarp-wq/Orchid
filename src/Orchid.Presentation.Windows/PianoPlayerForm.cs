@@ -4,7 +4,9 @@ namespace Orchid.Presentation.Windows;
 
 internal sealed class PianoPlayerForm : Form
 {
-    private readonly Button openButton = new() { Text = "Open performance log", AutoSize = true };
+    private readonly Button openButton = new() { Text = "Browse...", AutoSize = true };
+    private readonly TextBox logPathTextBox = new() { Width = 360 };
+    private readonly Button loadButton = new() { Text = "Load", AutoSize = true };
     private readonly Button playPauseButton = new() { Text = "Play", AutoSize = true, Enabled = false };
     private readonly Button stopButton = new() { Text = "Stop", AutoSize = true, Enabled = false };
     private readonly Label statusLabel = new() { AutoSize = true, Text = "Open an Orchid performance log to begin." };
@@ -29,6 +31,8 @@ internal sealed class PianoPlayerForm : Form
         };
 
         toolbar.Controls.Add(openButton);
+        toolbar.Controls.Add(logPathTextBox);
+        toolbar.Controls.Add(loadButton);
         toolbar.Controls.Add(playPauseButton);
         toolbar.Controls.Add(stopButton);
         toolbar.Controls.Add(statusLabel);
@@ -37,6 +41,7 @@ internal sealed class PianoPlayerForm : Form
         Controls.Add(toolbar);
 
         openButton.Click += OnOpenButtonClick;
+        loadButton.Click += OnLoadButtonClick;
         playPauseButton.Click += OnPlayPauseButtonClick;
         stopButton.Click += OnStopButtonClick;
         playbackTimer.Tick += OnPlaybackTimerTick;
@@ -46,18 +51,38 @@ internal sealed class PianoPlayerForm : Form
     {
         using var dialog = new OpenFileDialog
         {
+            AutoUpgradeEnabled = false,
             Filter = "Orchid performance logs (*.orchid)|*.orchid|All files (*.*)|*.*",
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            RestoreDirectory = true,
             Title = "Open Orchid Performance Log"
         };
 
-        if (dialog.ShowDialog(this) != DialogResult.OK)
+        if (dialog.ShowDialog() != DialogResult.OK)
         {
+            return;
+        }
+
+        logPathTextBox.Text = dialog.FileName;
+        LoadPerformanceLog(dialog.FileName);
+    }
+
+    private void OnLoadButtonClick(object? sender, EventArgs eventArgs)
+    {
+        LoadPerformanceLog(logPathTextBox.Text);
+    }
+
+    private void LoadPerformanceLog(string filePath)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            statusLabel.Text = "Choose a performance log or enter its path.";
             return;
         }
 
         try
         {
-            notes = PerformanceLogReader.Read(dialog.FileName);
+            notes = PerformanceLogReader.Read(filePath);
             ResetPlayback();
             playPauseButton.Enabled = notes.Count > 0;
             stopButton.Enabled = notes.Count > 0;
