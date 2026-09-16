@@ -5,4 +5,7 @@
     <Project Path="src/Orchid.Presentation.Universal/Orchid.Presentation.Universal.csproj" />
     <Project Path="src/Orchid.Presentation.Windows/Orchid.Presentation.Windows.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Orchid.Tests/Orchid.Tests.csproj" />
+  </Folder>
 </Solution>
