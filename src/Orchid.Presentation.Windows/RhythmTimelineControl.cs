@@ -12,8 +12,12 @@ internal sealed class RhythmTimelineControl : ScrollableControl
     private readonly List<NoteHitRegion> noteHitRegions = [];
     private PerformanceSession? session;
     private RhythmicValue subdivision = RhythmicValue.Quarter;
+    private Point? dragStartedAt;
+    private Point dragStartedScrollOffset;
+    private NoteHitRegion? pressedNoteRegion;
     private RecordedNote? hoveredNote;
     private RecordedNote? selectedNote;
+    private bool isPanning;
 
     public event EventHandler<PerformanceNoteSelectedEventArgs>? NoteSelected;
 
@@ -57,8 +61,13 @@ internal sealed class RhythmTimelineControl : ScrollableControl
     {
         base.OnMouseMove(eventArgs);
 
+        if (TryPanTimeline(eventArgs))
+        {
+            return;
+        }
+
         var hitRegion = HitTest(eventArgs.Location);
-        Cursor = hitRegion is null ? Cursors.Default : Cursors.Hand;
+        Cursor = hitRegion is null ? Cursors.SizeWE : Cursors.Hand;
 
         if (hitRegion?.Note == hoveredNote)
         {
@@ -82,7 +91,7 @@ internal sealed class RhythmTimelineControl : ScrollableControl
     protected override void OnMouseLeave(EventArgs eventArgs)
     {
         hoveredNote = null;
-        Cursor = Cursors.Default;
+        Cursor = isPanning ? Cursors.SizeWE : Cursors.Default;
         noteToolTip.Hide(this);
         base.OnMouseLeave(eventArgs);
     }
@@ -96,17 +105,48 @@ internal sealed class RhythmTimelineControl : ScrollableControl
             return;
         }
 
-        var hitRegion = HitTest(eventArgs.Location);
+        Focus();
+        Capture = true;
+        dragStartedAt = eventArgs.Location;
+        dragStartedScrollOffset = new Point(-AutoScrollPosition.X, -AutoScrollPosition.Y);
+        pressedNoteRegion = HitTest(eventArgs.Location);
+        isPanning = false;
+    }
 
-        if (hitRegion is null)
+    protected override void OnMouseUp(MouseEventArgs eventArgs)
+    {
+        base.OnMouseUp(eventArgs);
+
+        if (eventArgs.Button != MouseButtons.Left || dragStartedAt is null)
         {
             return;
         }
 
-        selectedNote = hitRegion.Note;
-        var deviations = GetClosestDeviations(hitRegion.Note);
-        NoteSelected?.Invoke(this, new PerformanceNoteSelectedEventArgs(hitRegion.Note, deviations));
+        var shouldSelectNote = !isPanning && pressedNoteRegion is not null;
+        var noteRegion = pressedNoteRegion;
+        Capture = false;
+        ResetPanState();
+
+        if (!shouldSelectNote || noteRegion is null)
+        {
+            Cursor = HitTest(eventArgs.Location) is null ? Cursors.SizeWE : Cursors.Hand;
+            return;
+        }
+
+        selectedNote = noteRegion.Note;
+        var deviations = GetClosestDeviations(noteRegion.Note);
+        NoteSelected?.Invoke(this, new PerformanceNoteSelectedEventArgs(noteRegion.Note, deviations));
         Invalidate();
+    }
+
+    protected override void OnMouseCaptureChanged(EventArgs eventArgs)
+    {
+        if (!Capture)
+        {
+            ResetPanState();
+        }
+
+        base.OnMouseCaptureChanged(eventArgs);
     }
 
     protected override void OnPaint(PaintEventArgs eventArgs)
@@ -149,6 +189,7 @@ internal sealed class RhythmTimelineControl : ScrollableControl
         graphics.DrawString($"Selected grid ({RhythmDeviationFormatter.FormatRhythmicValue(subdivision)})", Font, textBrush, LeftMargin + 148, 3);
         graphics.FillRectangle(noteBrush, LeftMargin + 310, 8, 16, 8);
         graphics.DrawString("Played note", Font, textBrush, LeftMargin + 332, 3);
+        graphics.DrawString("Drag horizontally to move the timeline", Font, textBrush, LeftMargin + 440, 3);
     }
 
     private void DrawEmptyState(Graphics graphics)
@@ -239,6 +280,41 @@ internal sealed class RhythmTimelineControl : ScrollableControl
     {
         var contentLocation = new PointF(mouseLocation.X - AutoScrollPosition.X, mouseLocation.Y);
         return noteHitRegions.LastOrDefault(region => region.Bounds.Contains(contentLocation));
+    }
+
+    private bool TryPanTimeline(MouseEventArgs eventArgs)
+    {
+        if (dragStartedAt is null || eventArgs.Button != MouseButtons.Left)
+        {
+            return false;
+        }
+
+        var horizontalDelta = eventArgs.X - dragStartedAt.Value.X;
+        var verticalDelta = eventArgs.Y - dragStartedAt.Value.Y;
+
+        if (!isPanning && Math.Abs(horizontalDelta) + Math.Abs(verticalDelta) < SystemInformation.DragSize.Width / 2)
+        {
+            return false;
+        }
+
+        isPanning = true;
+        hoveredNote = null;
+        Cursor = Cursors.SizeWE;
+        noteToolTip.Hide(this);
+
+        var maximumScrollOffset = Math.Max(0, AutoScrollMinSize.Width - ClientSize.Width);
+        var targetScrollOffset = Math.Clamp(dragStartedScrollOffset.X - horizontalDelta, 0, maximumScrollOffset);
+        AutoScrollPosition = new Point(targetScrollOffset, dragStartedScrollOffset.Y);
+        Invalidate();
+
+        return true;
+    }
+
+    private void ResetPanState()
+    {
+        dragStartedAt = null;
+        pressedNoteRegion = null;
+        isPanning = false;
     }
 
     private string CreateNoteDetails(RecordedNote note)
