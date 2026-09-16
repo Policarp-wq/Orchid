@@ -31,6 +31,7 @@ internal sealed class RhythmSessionForm : Form
     private readonly ComboBox gridUnitComboBox = CreateComboBox(70);
     private readonly Button playPauseButton = new() { Text = "Play", AutoSize = true, Enabled = false };
     private readonly Button stopPlaybackButton = new() { Text = "Stop playback", AutoSize = true, Enabled = false };
+    private readonly Label performanceStatusLabel = new() { AutoSize = true, Text = "No performance loaded." };
     private readonly RhythmTimelineControl timeline = new() { Dock = DockStyle.Fill };
     private readonly PianoKeyboardControl pianoKeyboard = new() { Dock = DockStyle.Fill };
     private readonly System.Windows.Forms.Timer sessionUiTimer = new() { Interval = 50 };
@@ -39,6 +40,7 @@ internal sealed class RhythmSessionForm : Form
     private readonly HashSet<int> livePressedNotes = [];
     private PerformanceSession? performanceSession;
     private TimeSpan pausedPlaybackPosition;
+    private int recordedAttackCount;
     private bool isClosing;
 
     public RhythmSessionForm(
@@ -143,6 +145,7 @@ internal sealed class RhythmSessionForm : Form
         toolbar.Controls.Add(gridUnitComboBox);
         toolbar.Controls.Add(playPauseButton);
         toolbar.Controls.Add(stopPlaybackButton);
+        toolbar.Controls.Add(performanceStatusLabel);
         return toolbar;
     }
 
@@ -222,6 +225,7 @@ internal sealed class RhythmSessionForm : Form
             midiInput.Start(deviceName);
             sessionRecorder.Start(tempo);
             metronome.Start(tempo);
+            recordedAttackCount = 0;
             livePressedNotes.Clear();
             pianoKeyboard.SetActiveNotes(livePressedNotes);
             SetSessionControls(isRunning: true);
@@ -270,7 +274,8 @@ internal sealed class RhythmSessionForm : Form
         {
             var logPath = PerformanceLogWriter.Write(session, Path.Combine(AppContext.BaseDirectory, "logs"));
             logPathTextBox.Text = logPath;
-            sessionStatusLabel.Text = $"Recorded {session.Notes.Count} note(s). Saved to {logPath}";
+            sessionStatusLabel.Text = "Session stopped.";
+            performanceStatusLabel.Text = $"Displayed and saved {session.Notes.Count} note(s): {Path.GetFileName(logPath)}";
         }
         catch (Exception exception)
         {
@@ -300,6 +305,7 @@ internal sealed class RhythmSessionForm : Form
         if (eventArgs.IsPressed)
         {
             livePressedNotes.Add(eventArgs.MidiNoteNumber);
+            recordedAttackCount++;
         }
         else
         {
@@ -311,7 +317,7 @@ internal sealed class RhythmSessionForm : Form
 
     private void UpdateRunningStatus()
     {
-        sessionStatusLabel.Text = $"Recording: {sessionRecorder.Elapsed:mm\\:ss\\.fff}";
+        sessionStatusLabel.Text = $"Recording: {sessionRecorder.Elapsed:mm\\:ss\\.fff} | Note attacks: {recordedAttackCount}";
     }
 
     private void SetSessionControls(bool isRunning)
@@ -348,9 +354,17 @@ internal sealed class RhythmSessionForm : Form
 
     private void LoadPerformanceLog(string filePath)
     {
+        filePath = filePath.Trim().Trim('"');
+
         if (string.IsNullOrWhiteSpace(filePath))
         {
             sessionStatusLabel.Text = "Choose a performance log or enter its path.";
+            return;
+        }
+
+        if (!File.Exists(filePath))
+        {
+            performanceStatusLabel.Text = "The entered performance log path does not exist.";
             return;
         }
 
@@ -359,10 +373,14 @@ internal sealed class RhythmSessionForm : Form
             StopPlayback();
             performanceSession = PerformanceLogReader.Read(filePath);
             ApplyPerformanceSession();
-            sessionStatusLabel.Text = $"Loaded {performanceSession.Notes.Count} note(s).";
+            sessionStatusLabel.Text = "Performance log loaded.";
+            performanceStatusLabel.Text = performanceSession.Notes.Count == 0
+                ? $"Loaded {Path.GetFileName(filePath)}, but it contains no notes."
+                : $"Loaded {performanceSession.Notes.Count} note(s): {Path.GetFileName(filePath)}";
         }
         catch (Exception exception)
         {
+            performanceStatusLabel.Text = "The performance log could not be loaded.";
             ShowError("Unable to open the performance log", exception);
         }
     }
