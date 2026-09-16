@@ -1,3 +1,4 @@
+using Orchid.Application;
 using Orchid.Core;
 
 namespace Orchid.Presentation.Windows;
@@ -7,8 +8,14 @@ internal sealed class RhythmTimelineControl : ScrollableControl
     private const int LeftMargin = 72;
     private const int RightMargin = 120;
     private const int PixelsPerSecond = 180;
+    private readonly ToolTip noteToolTip = new();
+    private readonly List<NoteHitRegion> noteHitRegions = [];
     private PerformanceSession? session;
     private RhythmicValue subdivision = RhythmicValue.Quarter;
+    private RecordedNote? hoveredNote;
+    private RecordedNote? selectedNote;
+
+    public event EventHandler<PerformanceNoteSelectedEventArgs>? NoteSelected;
 
     public RhythmTimelineControl()
     {
@@ -18,10 +25,24 @@ internal sealed class RhythmTimelineControl : ScrollableControl
         MinimumSize = new Size(600, 220);
     }
 
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            noteToolTip.Dispose();
+        }
+
+        base.Dispose(disposing);
+    }
+
     public void SetSession(PerformanceSession? performanceSession, RhythmicValue gridSubdivision)
     {
         session = performanceSession;
         subdivision = gridSubdivision;
+        hoveredNote = null;
+        selectedNote = null;
+        noteHitRegions.Clear();
+        noteToolTip.Hide(this);
 
         var contentWidth = performanceSession is null
             ? ClientSize.Width
@@ -29,6 +50,62 @@ internal sealed class RhythmTimelineControl : ScrollableControl
 
         AutoScrollPosition = Point.Empty;
         AutoScrollMinSize = new Size(contentWidth, 250);
+        Invalidate();
+    }
+
+    protected override void OnMouseMove(MouseEventArgs eventArgs)
+    {
+        base.OnMouseMove(eventArgs);
+
+        var hitRegion = HitTest(eventArgs.Location);
+        Cursor = hitRegion is null ? Cursors.Default : Cursors.Hand;
+
+        if (hitRegion?.Note == hoveredNote)
+        {
+            return;
+        }
+
+        hoveredNote = hitRegion?.Note;
+        noteToolTip.Hide(this);
+
+        if (hitRegion is not null)
+        {
+            noteToolTip.Show(
+                CreateNoteDetails(hitRegion.Note),
+                this,
+                eventArgs.X + 16,
+                eventArgs.Y + 18,
+                duration: 12_000);
+        }
+    }
+
+    protected override void OnMouseLeave(EventArgs eventArgs)
+    {
+        hoveredNote = null;
+        Cursor = Cursors.Default;
+        noteToolTip.Hide(this);
+        base.OnMouseLeave(eventArgs);
+    }
+
+    protected override void OnMouseDown(MouseEventArgs eventArgs)
+    {
+        base.OnMouseDown(eventArgs);
+
+        if (eventArgs.Button != MouseButtons.Left)
+        {
+            return;
+        }
+
+        var hitRegion = HitTest(eventArgs.Location);
+
+        if (hitRegion is null)
+        {
+            return;
+        }
+
+        selectedNote = hitRegion.Note;
+        var deviations = GetClosestDeviations(hitRegion.Note);
+        NoteSelected?.Invoke(this, new PerformanceNoteSelectedEventArgs(hitRegion.Note, deviations));
         Invalidate();
     }
 
@@ -69,7 +146,7 @@ internal sealed class RhythmTimelineControl : ScrollableControl
         graphics.FillRectangle(measureBrush, LeftMargin, 8, 16, 8);
         graphics.DrawString("Measure start", Font, textBrush, LeftMargin + 22, 3);
         graphics.FillRectangle(gridBrush, LeftMargin + 126, 8, 16, 8);
-        graphics.DrawString($"Selected grid ({FormatRhythmicValue(subdivision)})", Font, textBrush, LeftMargin + 148, 3);
+        graphics.DrawString($"Selected grid ({RhythmDeviationFormatter.FormatRhythmicValue(subdivision)})", Font, textBrush, LeftMargin + 148, 3);
         graphics.FillRectangle(noteBrush, LeftMargin + 310, 8, 16, 8);
         graphics.DrawString("Played note", Font, textBrush, LeftMargin + 332, 3);
     }
@@ -119,6 +196,8 @@ internal sealed class RhythmTimelineControl : ScrollableControl
 
     private void DrawNotes(Graphics graphics, PerformanceSession performanceSession)
     {
+        noteHitRegions.Clear();
+
         if (performanceSession.Notes.Count == 0)
         {
             using var emptyBrush = new SolidBrush(Color.DarkGray);
@@ -126,10 +205,7 @@ internal sealed class RhythmTimelineControl : ScrollableControl
             return;
         }
 
-        using var noteBrush = new SolidBrush(Color.MediumSeaGreen);
-        using var noteLabelBrush = new SolidBrush(Color.FromArgb(34, 92, 66));
         using var textBrush = new SolidBrush(Color.WhiteSmoke);
-        using var markerPen = new Pen(Color.MediumSeaGreen, 2f);
 
         for (var noteIndex = 0; noteIndex < performanceSession.Notes.Count; noteIndex++)
         {
@@ -140,6 +216,12 @@ internal sealed class RhythmTimelineControl : ScrollableControl
             var noteName = MidiNoteName.Get(note.MidiNoteNumber);
             var textSize = graphics.MeasureString(noteName, Font);
             var labelBounds = new RectangleF(x + 6, y, Math.Max(38, textSize.Width + 12), 24);
+            var isSelected = note == selectedNote;
+            var noteColor = isSelected ? Color.DarkOrange : Color.MediumSeaGreen;
+            var labelColor = isSelected ? Color.FromArgb(126, 72, 20) : Color.FromArgb(34, 92, 66);
+            using var noteBrush = new SolidBrush(noteColor);
+            using var noteLabelBrush = new SolidBrush(labelColor);
+            using var markerPen = new Pen(noteColor, isSelected ? 3f : 2f);
 
             graphics.DrawLine(markerPen, x, 144, x, 238);
             graphics.FillEllipse(noteBrush, x - 4, y + 8, 9, 9);
@@ -147,16 +229,53 @@ internal sealed class RhythmTimelineControl : ScrollableControl
             graphics.DrawRectangle(markerPen, labelBounds.X, labelBounds.Y, labelBounds.Width, labelBounds.Height);
             graphics.DrawString(noteName, Font, textBrush, labelBounds.X + 6, labelBounds.Y + 4);
             graphics.FillRectangle(noteBrush, x, y + 25, durationWidth, 4);
+
+            var durationBounds = new RectangleF(x - 5, y + 5, Math.Max(durationWidth + 10, 12), 26);
+            noteHitRegions.Add(new NoteHitRegion(note, RectangleF.Union(labelBounds, durationBounds)));
         }
     }
 
-    private static string FormatRhythmicValue(RhythmicValue value)
+    private NoteHitRegion? HitTest(Point mouseLocation)
     {
-        return $"1/{(int)value}";
+        var contentLocation = new PointF(mouseLocation.X - AutoScrollPosition.X, mouseLocation.Y);
+        return noteHitRegions.LastOrDefault(region => region.Bounds.Contains(contentLocation));
+    }
+
+    private string CreateNoteDetails(RecordedNote note)
+    {
+        var lines = new List<string>
+        {
+            $"{MidiNoteName.Get(note.MidiNoteNumber)} | MIDI {note.MidiNoteNumber}",
+            $"Start: {note.StartOffset.TotalMilliseconds:0.#} ms",
+            $"Duration: {note.Duration.TotalMilliseconds:0.#} ms"
+        };
+
+        var deviations = GetClosestDeviations(note);
+
+        if (deviations.Count > 0)
+        {
+            lines.Add("Closest grid values:");
+            lines.AddRange(deviations.Select(RhythmDeviationFormatter.Format));
+        }
+        else
+        {
+            lines.Add("Rhythm deviation is unavailable for this legacy log.");
+        }
+
+        return string.Join(Environment.NewLine, lines);
+    }
+
+    private IReadOnlyList<RhythmDeviation> GetClosestDeviations(RecordedNote note)
+    {
+        return session?.Tempo is null
+            ? []
+            : RhythmDeviationCalculator.FindClosest(session.Tempo, note.StartOffset, subdivision, count: 2);
     }
 
     private static int ToPixels(TimeSpan time)
     {
         return (int)Math.Round(time.TotalSeconds * PixelsPerSecond);
     }
+
+    private sealed record NoteHitRegion(RecordedNote Note, RectangleF Bounds);
 }

@@ -32,6 +32,7 @@ internal sealed class RhythmSessionForm : Form
     private readonly Button playPauseButton = new() { Text = "Play", AutoSize = true, Enabled = false };
     private readonly Button stopPlaybackButton = new() { Text = "Stop playback", AutoSize = true, Enabled = false };
     private readonly Label performanceStatusLabel = new() { AutoSize = true, Text = "No performance loaded." };
+    private readonly Label selectedNoteStatusLabel = new() { AutoSize = true, Text = "Click a note block to inspect it." };
     private readonly RhythmTimelineControl timeline = new() { Dock = DockStyle.Fill };
     private readonly PianoKeyboardControl pianoKeyboard = new() { Dock = DockStyle.Fill };
     private readonly System.Windows.Forms.Timer sessionUiTimer = new() { Interval = 50 };
@@ -146,6 +147,7 @@ internal sealed class RhythmSessionForm : Form
         toolbar.Controls.Add(playPauseButton);
         toolbar.Controls.Add(stopPlaybackButton);
         toolbar.Controls.Add(performanceStatusLabel);
+        toolbar.Controls.Add(selectedNoteStatusLabel);
         return toolbar;
     }
 
@@ -183,6 +185,7 @@ internal sealed class RhythmSessionForm : Form
         sessionUiTimer.Tick += (_, _) => UpdateRunningStatus();
         playbackTimer.Tick += (_, _) => UpdatePlayback();
         midiInput.NoteReceived += OnMidiNoteReceived;
+        timeline.NoteSelected += OnTimelineNoteSelected;
     }
 
     private void RefreshMidiDevices()
@@ -398,6 +401,9 @@ internal sealed class RhythmSessionForm : Form
     private void RefreshTimeline()
     {
         timeline.SetSession(performanceSession, GetSelectedValue(gridUnitComboBox));
+        selectedNoteStatusLabel.Text = performanceSession?.Notes.Count > 0
+            ? "Click a note block to inspect it."
+            : "No note is available for inspection.";
     }
 
     private void TogglePlayback()
@@ -467,6 +473,20 @@ internal sealed class RhythmSessionForm : Form
             .Select(note => note.MidiNoteNumber) ?? [];
 
         pianoKeyboard.SetActiveNotes(activeNotes);
+    }
+
+    private void OnTimelineNoteSelected(object? sender, PerformanceNoteSelectedEventArgs eventArgs)
+    {
+        StopPlayback();
+        pianoKeyboard.SetActiveNotes([eventArgs.Note.MidiNoteNumber]);
+
+        var deviationText = eventArgs.Deviations.Count == 0
+            ? "rhythm deviation unavailable"
+            : string.Join(" | ", eventArgs.Deviations.Select(RhythmDeviationFormatter.Format));
+
+        selectedNoteStatusLabel.Text =
+            $"Selected {MidiNoteName.Get(eventArgs.Note.MidiNoteNumber)} | " +
+            $"Start {eventArgs.Note.StartOffset.TotalMilliseconds:0.#} ms | {deviationText}";
     }
 
     private static RhythmicValue GetSelectedValue(ComboBox comboBox)
