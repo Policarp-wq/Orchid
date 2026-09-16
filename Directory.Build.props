@@ -2,9 +2,19 @@
   <PropertyGroup>
     <OrchidBuildHost Condition="'$(OS)' == 'Windows_NT'">Windows</OrchidBuildHost>
     <OrchidBuildHost Condition="'$(OrchidBuildHost)' == ''">Linux</OrchidBuildHost>
-    <MSBuildProjectExtensionsPath>obj/$(OrchidBuildHost)/</MSBuildProjectExtensionsPath>
-    <BaseIntermediateOutputPath>obj/$(OrchidBuildHost)/</BaseIntermediateOutputPath>
-    <BaseOutputPath>bin/$(OrchidBuildHost)/</BaseOutputPath>
     <DefaultItemExcludes>$(DefaultItemExcludes);bin/**;obj/**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
+    <MSBuildProjectExtensionsPath>obj/Windows/</MSBuildProjectExtensionsPath>
+    <BaseIntermediateOutputPath>obj/Windows/</BaseIntermediateOutputPath>
+    <BaseOutputPath>bin/Windows/</BaseOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(OS)' != 'Windows_NT'">
+    <OrchidWslBuildRoot>/tmp/orchid-build</OrchidWslBuildRoot>
+    <MSBuildProjectExtensionsPath>$(OrchidWslBuildRoot)/$(MSBuildProjectName)/obj/</MSBuildProjectExtensionsPath>
+    <BaseIntermediateOutputPath>$(OrchidWslBuildRoot)/$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(OrchidWslBuildRoot)/$(MSBuildProjectName)/bin/</BaseOutputPath>
   </PropertyGroup>
 </Project>

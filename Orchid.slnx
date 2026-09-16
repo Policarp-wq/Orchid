@@ -3,5 +3,6 @@
     <Project Path="src/Orchid.Application/Orchid.Application.csproj" />
     <Project Path="src/Orchid.Core/Orchid.Core.csproj" />
     <Project Path="src/Orchid.Presentation.Universal/Orchid.Presentation.Universal.csproj" />
+    <Project Path="src/Orchid.Presentation.Windows/Orchid.Presentation.Windows.csproj" />
   </Folder>
 </Solution>
