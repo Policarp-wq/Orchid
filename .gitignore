@@ -3,4 +3,5 @@ obj/
 .vs/
 .idea/
 logs/
+artifacts/
 *.csproj.user

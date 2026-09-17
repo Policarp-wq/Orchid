@@ -31,6 +31,12 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      - name: Install Android SDK dependencies
+        run: dotnet build src/Orchid.Presentation.Android/Orchid.Presentation.Android.csproj -t:InstallAndroidDependencies -p:AcceptAndroidSDKLicenses=True
+
       - name: Restore
         run: dotnet restore Orchid.slnx
 
