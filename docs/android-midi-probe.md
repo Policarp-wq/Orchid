@@ -4,6 +4,8 @@
 
 `Orchid.Presentation.Android` is a diagnostic application for verifying Android USB host and MIDI input support before the full Orchid UI is ported. It does not perform rhythm analysis, play a metronome, or generate piano audio.
 
+Startup and MIDI configuration failures are shown directly in the application so the probe remains diagnosable without attaching an Android debugger.
+
 The probe reports:
 
 - device model and Android compatibility API level;

@@ -110,7 +110,7 @@ internal sealed class AndroidMidiProbe : IDisposable
                 $"{deviceInfo.InputPortCount} input port(s)");
 
             var listener = new DeviceOpenedListener(
-                device => OnDeviceOpened(deviceInfo, name, device, generation));
+                device => OnDeviceOpenedSafely(deviceInfo, name, device, generation));
             pendingListeners.Add(listener);
             midiManager.OpenDevice(deviceInfo, listener, mainHandler);
         }
@@ -156,6 +156,25 @@ internal sealed class AndroidMidiProbe : IDisposable
         }
 
         writeLine($"Listening to '{deviceName}' on {connectedPortCount} output port(s).");
+    }
+
+    private void OnDeviceOpenedSafely(
+        MidiDeviceInfo deviceInfo,
+        string deviceName,
+        MidiDevice? device,
+        int generation)
+    {
+        try
+        {
+            OnDeviceOpened(deviceInfo, deviceName, device, generation);
+        }
+        catch (Exception exception)
+        {
+            device?.Dispose();
+            global::Android.Util.Log.Error("OrchidMidiProbe", exception.ToString());
+            writeLine($"Could not configure MIDI device '{deviceName}'.");
+            writeLine(exception.ToString());
+        }
     }
 
     private void OnNoteReceived(string source, MidiNoteMessage message)

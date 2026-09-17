@@ -10,7 +10,7 @@ namespace Orchid.Presentation.Android;
     MainLauncher = true,
     Exported = true,
     ScreenOrientation = global::Android.Content.PM.ScreenOrientation.SensorLandscape)]
-internal sealed class MainActivity : Activity
+public sealed class MainActivity : Activity
 {
     private const int MaximumLogLines = 500;
     private readonly Queue<string> logLines = new();
@@ -22,9 +22,16 @@ internal sealed class MainActivity : Activity
     {
         base.OnCreate(savedInstanceState);
 
-        SetContentView(CreateContentView());
-        midiProbe = new AndroidMidiProbe(this, AppendLogLine);
-        RefreshProbe();
+        try
+        {
+            SetContentView(CreateContentView());
+            midiProbe = new AndroidMidiProbe(this, AppendLogLine);
+            RefreshProbe();
+        }
+        catch (Exception exception)
+        {
+            ShowStartupError(exception);
+        }
     }
 
     protected override void OnDestroy()
@@ -90,7 +97,15 @@ internal sealed class MainActivity : Activity
         ClearLog();
         AppendLogLine("Scanning the device...");
         AppendLogLine(string.Empty);
-        midiProbe?.Scan();
+
+        try
+        {
+            midiProbe?.Scan();
+        }
+        catch (Exception exception)
+        {
+            LogException("MIDI probe scan failed.", exception);
+        }
     }
 
     private void ClearLog()
@@ -122,5 +137,29 @@ internal sealed class MainActivity : Activity
     private int ToPixels(int densityIndependentPixels)
     {
         return (int)Math.Round(densityIndependentPixels * Resources!.DisplayMetrics!.Density);
+    }
+
+    private void ShowStartupError(Exception exception)
+    {
+        global::Android.Util.Log.Error("OrchidMidiProbe", exception.ToString());
+
+        var errorTextView = new TextView(this)
+        {
+            Text = $"Orchid MIDI Probe could not start.\n\n{exception}",
+            TextSize = 14
+        };
+        errorTextView.SetTextIsSelectable(true);
+        errorTextView.SetPadding(ToPixels(16), ToPixels(16), ToPixels(16), ToPixels(16));
+
+        var errorScrollView = new ScrollView(this);
+        errorScrollView.AddView(errorTextView);
+        SetContentView(errorScrollView);
+    }
+
+    private void LogException(string message, Exception exception)
+    {
+        global::Android.Util.Log.Error("OrchidMidiProbe", exception.ToString());
+        AppendLogLine(message);
+        AppendLogLine(exception.ToString());
     }
 }
