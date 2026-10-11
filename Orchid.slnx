@@ -1,2 +1,17 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="Orchid.Application/Orchid.Application.csproj" />
+    <Project Path="Orchid.Core/Orchid.Core.csproj" />
+    <Project Path="Orchid.Infrastructure/Orchid.Infrastructure.csproj" />
+    <Project Path="Orchid.UiPreview/Orchid.UiPreview.csproj" />
+  </Folder>
+  <Folder Name="/src/Platform/">
+    <Project Path="Orchid.Platform.Windows/Orchid.Platform.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Orchid.AudioChecks/Orchid.AudioChecks.csproj" />
+    <Project Path="tests/Orchid.Core.Tests/Orchid.Core.Tests.csproj" />
+    <Project Path="tests/Orchid.Infrastructure.Tests/Orchid.Infrastructure.Tests.csproj" />
+    <Project Path="tests/Orchid.UiPreview.Tests/Orchid.UiPreview.Tests.csproj" />
+  </Folder>
 </Solution>

@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Orchid MIDI devices": {
+      "commandName": "Project",
+      "commandLineArgs": "--midi-list"
+    },
+    "Orchid MIDI recording": {
+      "commandName": "Project",
+      "commandLineArgs": "--midi 0"
+    },
+    "Orchid metronome": {
+      "commandName": "Project",
+      "commandLineArgs": "--play"
+    }
+  }
+}

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Orchid.UiPreview.WorkspacePage"
+             BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+    <ScrollView>
+        <VerticalStackLayout Padding="{StaticResource PagePadding}" Spacing="{StaticResource SpaceM}">
+            <Grid ColumnDefinitions="*,Auto">
+                <HorizontalStackLayout Spacing="{StaticResource SpaceM}" VerticalOptions="Center">
+                    <Image Source="{StaticResource IconFlower}" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+                    <Label Text="Orchid" FontSize="{StaticResource FontTitle}" FontAttributes="Bold" />
+                    <Label x:Name="Subtitle" Text="Rhythm practice" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="1" Text="Light / Dark" Clicked="ChangeTheme" />
+            </Grid>
+            <Border>
+                <VerticalStackLayout Spacing="{StaticResource SpaceM}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="SESSION" Style="{StaticResource SectionLabel}" VerticalOptions="Center" />
+                        <Button x:Name="RefreshButton" Grid.Column="1" Text="Refresh inputs" ImageSource="{StaticResource IconRefresh}" ContentLayout="Left,8" Clicked="RefreshDevices" />
+                    </Grid>
+                    <Grid x:Name="Setup" ColumnDefinitions="*,110,110" RowDefinitions="Auto,Auto" ColumnSpacing="{StaticResource SpaceL}">
+                        <Picker x:Name="Device" Title="MIDI input" SelectedIndexChanged="SelectDevice" />
+                        <VerticalStackLayout x:Name="TempoField" Grid.Column="1">
+                            <Label Text="Tempo (BPM)" Style="{StaticResource SecondaryLabel}" />
+                            <Entry x:Name="Tempo" Text="120" Keyboard="Numeric" Completed="ChangeSettings" Unfocused="ChangeSettings" />
+                        </VerticalStackLayout>
+                        <Picker x:Name="Pulse" Grid.Column="2" Title="Pulse" SelectedIndexChanged="ChangeSettings" />
+                    </Grid>
+                    <HorizontalStackLayout Spacing="{StaticResource SpaceL}">
+                        <Button x:Name="SessionButton" Style="{StaticResource PrimaryButton}" Text="Start session" ImageSource="{StaticResource IconRecord}" ContentLayout="Left,8" IsEnabled="False" Clicked="ToggleRecording" />
+                        <Label x:Name="SessionStatus" Text="Choose a MIDI input · 4/4" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                    <Label x:Name="LiveNoteLabel" Text="Play a note after Start" FontSize="{StaticResource FontDisplay}" />
+                </VerticalStackLayout>
+            </Border>
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout Spacing="{StaticResource SpaceXS}">
+                    <Label Text="Current recording" FontSize="{StaticResource FontTitle}" />
+                    <Label x:Name="SessionSummary" Text="No recording yet" Style="{StaticResource SecondaryLabel}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Text="Open log" ImageSource="{StaticResource IconOpenLog}" ContentLayout="Left,8" IsEnabled="False" />
+            </Grid>
+            <Grid x:Name="Review" ColumnDefinitions="*,230" RowDefinitions="Auto,Auto" ColumnSpacing="{StaticResource SpaceL}" RowSpacing="{StaticResource SpaceL}">
+                <Border x:Name="TimelinePanel">
+                    <VerticalStackLayout Spacing="{StaticResource SpaceM}">
+                        <Grid ColumnDefinitions="Auto,Auto,*,110" ColumnSpacing="{StaticResource SpaceM}">
+                            <Button x:Name="PlayButton" Style="{StaticResource IconButton}" ImageSource="{StaticResource IconPlay}" SemanticProperties.Description="Play" ToolTipProperties.Text="Play" Clicked="TogglePlayback" />
+                            <Button x:Name="RewindButton" Grid.Column="1" Style="{StaticResource IconButton}" ImageSource="{StaticResource IconRewind}" SemanticProperties.Description="Return to start" ToolTipProperties.Text="Return to start" Clicked="Rewind" />
+                            <Label x:Name="TimeLabel" Grid.Column="2" VerticalOptions="Center" />
+                            <Picker x:Name="ReviewGrid" Grid.Column="3" SelectedIndexChanged="ChangeGrid" SemanticProperties.Description="Review grid" />
+                        </Grid>
+                        <ScrollView HeightRequest="360" Orientation="Vertical">
+                            <Grid x:Name="TimelineViewport" ColumnDefinitions="64,*">
+                                <GraphicsView x:Name="PitchLabels" SemanticProperties.Description="Timeline pitch labels" />
+                                <Grid Grid.Column="1">
+                                    <GraphicsView x:Name="Timeline" InputTransparent="True" SemanticProperties.Description="Recorded notes timeline" />
+                                    <ScrollView x:Name="TimelineScroll" Orientation="Horizontal" HorizontalScrollBarVisibility="Always" Scrolled="ScrollTimeline">
+                                        <BoxView x:Name="TimelineExtent" Color="Transparent">
+                                            <BoxView.GestureRecognizers>
+                                                <TapGestureRecognizer Tapped="SelectNote" />
+                                            </BoxView.GestureRecognizers>
+                                        </BoxView>
+                                    </ScrollView>
+                                </Grid>
+                            </Grid>
+                        </ScrollView>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Session position" Style="{StaticResource SecondaryLabel}" />
+                            <Label x:Name="PositionLabel" Grid.Column="1" Style="{StaticResource SecondaryLabel}" />
+                        </Grid>
+                        <Slider x:Name="PositionSlider" Maximum="8" ValueChanged="Seek" DragStarted="PausePlayback" SemanticProperties.Description="Session position in seconds" />
+                        <FlexLayout Wrap="Wrap" Direction="Row">
+                            <HorizontalStackLayout Style="{StaticResource LegendItem}">
+                                <BoxView Style="{StaticResource LegendMeasure}" />
+                                <Label Text="Measure start" Style="{StaticResource SecondaryLabel}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Style="{StaticResource LegendItem}">
+                                <BoxView Style="{StaticResource LegendBeat}" />
+                                <Label Text="Metronome beat" Style="{StaticResource SecondaryLabel}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Style="{StaticResource LegendItem}">
+                                <BoxView Style="{StaticResource LegendSubdivision}" />
+                                <Label Text="Subdivision" Style="{StaticResource SecondaryLabel}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Style="{StaticResource LegendItem}">
+                                <BoxView Style="{StaticResource LegendNote}" />
+                                <Label Text="Recorded note" Style="{StaticResource SecondaryLabel}" />
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Style="{StaticResource LegendItem}">
+                                <BoxView Style="{StaticResource LegendSelected}" />
+                                <Label Text="At playhead" Style="{StaticResource SecondaryLabel}" />
+                            </HorizontalStackLayout>
+                        </FlexLayout>
+                    </VerticalStackLayout>
+                </Border>
+                <Border x:Name="MomentPanel" Grid.Column="1">
+                    <VerticalStackLayout Spacing="{StaticResource SpaceL}">
+                        <Label Text="AT THIS MOMENT" Style="{StaticResource SectionLabel}" />
+                        <HorizontalStackLayout Spacing="{StaticResource SpaceS}">
+                            <Label x:Name="NoteLabel" FontSize="{StaticResource FontDisplay}" />
+                            <Label x:Name="MidiLabel" Style="{StaticResource SecondaryLabel}" VerticalOptions="End" />
+                        </HorizontalStackLayout>
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="{StaticResource SpaceS}">
+                            <Label Text="Attack" Style="{StaticResource SecondaryLabel}" />
+                            <Label x:Name="AttackLabel" HorizontalOptions="End" Grid.Column="1" />
+                            <Label Grid.Row="1" Text="Held" Style="{StaticResource SecondaryLabel}" />
+                            <Label x:Name="HeldLabel" HorizontalOptions="End" Grid.Row="1" Grid.Column="1" />
+                        </Grid>
+                        <Label Text="METRONOME POSITION" Style="{StaticResource SectionLabel}" />
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="{StaticResource SpaceS}">
+                            <Label Text="Measure" Style="{StaticResource SecondaryLabel}" />
+                            <Label x:Name="MeasureLabel" HorizontalOptions="End" Grid.Column="1" />
+                            <Label Grid.Row="1" Text="Beat" Style="{StaticResource SecondaryLabel}" />
+                            <Label x:Name="BeatLabel" HorizontalOptions="End" Grid.Row="1" Grid.Column="1" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+            <Label Text="KEYBOARD · C3–B5" Style="{StaticResource SectionLabel}" />
+            <Border Padding="0">
+                <GraphicsView x:Name="Keyboard" HeightRequest="80" SemanticProperties.Description="Piano keys held at the session position" />
+            </Border>
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Not saved · recording kept in memory" Style="{StaticResource SecondaryLabel}" />
+                <Label x:Name="FooterContext" Grid.Column="1" Style="{StaticResource SecondaryLabel}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
