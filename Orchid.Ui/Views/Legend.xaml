@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.Legend"
+             x:DataType="state:ReviewState">
+    <!-- Exactly the layers the timeline draws now: a hidden layer has no entry. -->
+    <FlexLayout Wrap="Wrap" AlignItems="Center">
+        <HorizontalStackLayout Style="{StaticResource LegendItem}">
+            <BoxView Style="{StaticResource LegendMeasure}" />
+            <Label Text="{x:Static theme:Strings.LegendMeasure}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}">
+            <BoxView Style="{StaticResource LegendBeat}" />
+            <Label Text="{x:Static theme:Strings.LegendBeat}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}" IsVisible="{Binding GridSettings.ShowStrongBeats}">
+            <BoxView Style="{StaticResource LegendStrong}" />
+            <Label Text="{x:Static theme:Strings.LegendStrong}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}" IsVisible="{Binding GridSettings.ShowSubdivisions}">
+            <!-- Dotted like the subdivision lines of the timeline. -->
+            <VerticalStackLayout Spacing="3" VerticalOptions="Center">
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+            </VerticalStackLayout>
+            <Label Text="{x:Static theme:Strings.LegendSubdivision}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}">
+            <BoxView Style="{StaticResource LegendNote}" />
+            <Label Text="{x:Static theme:Strings.LegendNote}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}">
+            <BoxView Style="{StaticResource LegendSelected}" />
+            <Label Text="{x:Static theme:Strings.LegendHeld}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}" IsVisible="{Binding HasPedal}">
+            <BoxView Style="{StaticResource LegendPedal}" />
+            <Label Text="{x:Static theme:Strings.LegendPedal}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Style="{StaticResource LegendItem}" IsVisible="{Binding HasPedal}">
+            <BoxView Style="{StaticResource LegendSustain}" />
+            <Label Text="{x:Static theme:Strings.LegendSustain}" Style="{StaticResource SecondaryLabel}" />
+        </HorizontalStackLayout>
+    </FlexLayout>
+</ContentView>

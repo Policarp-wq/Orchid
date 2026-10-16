@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.ReviewToolbar"
+             x:DataType="state:ReviewState">
+    <!-- Numbers sit in reserved widths, so a changing time never moves a control. Transport on the left, tools on the right; when the
+         tools do not fit beside it, ReviewToolbar moves them to a second row (a wrapping FlexLayout reserved two rows even when one fitted). -->
+    <Grid x:Name="Root" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="{DynamicResource SpaceL}" RowSpacing="{DynamicResource SpaceS}">
+      <HorizontalStackLayout x:Name="Transport" Spacing="{DynamicResource SpaceS}" VerticalOptions="Center">
+        <Button Style="{StaticResource IconButton}" Command="{Binding PlayPauseCommand}"
+                SemanticProperties.Description="{Binding PlayPauseText}" ToolTipProperties.Text="{Binding PlayPauseText}">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding IsPlaying}" Value="True">
+                    <Setter Property="ImageSource" Value="{DynamicResource IconPause}" />
+                </DataTrigger>
+                <DataTrigger TargetType="Button" Binding="{Binding IsPlaying}" Value="False">
+                    <Setter Property="ImageSource" Value="{DynamicResource IconPlay}" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <Button Style="{StaticResource IconButton}" Command="{Binding RewindCommand}" ImageSource="{DynamicResource IconRewind}" Margin="0,0,4,0"
+                SemanticProperties.Description="{x:Static theme:Strings.Rewind}" ToolTipProperties.Text="{x:Static theme:Strings.Rewind}" />
+        <Label Text="{Binding PositionText}" WidthRequest="{DynamicResource TimeReadoutWidth}" VerticalTextAlignment="Center" />
+        <Label Text="{Binding DurationText}" WidthRequest="{DynamicResource TimeReadoutWidth}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+        <Label Text="{Binding NoteCountText}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+      </HorizontalStackLayout>
+
+        <HorizontalStackLayout x:Name="Tools" Grid.Column="1" HorizontalOptions="End" Spacing="{DynamicResource SpaceS}">
+            <Button Style="{StaticResource IconButton}" Command="{Binding ZoomTimeOutCommand}" ImageSource="{DynamicResource IconZoomOut}" IsEnabled="{Binding CanZoomTimeOut}"
+                    SemanticProperties.Description="{x:Static theme:Strings.ZoomTimeOut}" ToolTipProperties.Text="{x:Static theme:Strings.ZoomTimeOut}" />
+            <Button Style="{StaticResource IconButton}" Command="{Binding ZoomTimeInCommand}" ImageSource="{DynamicResource IconZoomIn}" IsEnabled="{Binding CanZoomTimeIn}"
+                    SemanticProperties.Description="{x:Static theme:Strings.ZoomTimeIn}" ToolTipProperties.Text="{x:Static theme:Strings.ZoomTimeIn}" />
+            <Image Source="{DynamicResource IconPitchZoom}" VerticalOptions="Center" Margin="8,0,0,0" />
+            <Button Style="{StaticResource IconButton}" Command="{Binding ZoomPitchOutCommand}" ImageSource="{DynamicResource IconMinus}" IsEnabled="{Binding CanZoomPitchOut}"
+                    SemanticProperties.Description="{x:Static theme:Strings.ZoomPitchOut}" ToolTipProperties.Text="{x:Static theme:Strings.ZoomPitchOut}" />
+            <Button Style="{StaticResource IconButton}" Command="{Binding ZoomPitchInCommand}" ImageSource="{DynamicResource IconPlus}" IsEnabled="{Binding CanZoomPitchIn}"
+                    SemanticProperties.Description="{x:Static theme:Strings.ZoomPitchIn}" ToolTipProperties.Text="{x:Static theme:Strings.ZoomPitchIn}" />
+            <Button Text="{x:Static theme:Strings.Fit}" ImageSource="{DynamicResource IconExpand}" ContentLayout="Left,8" Command="{Binding FitCommand}" Margin="8,0,0,0"
+                    SemanticProperties.Description="{x:Static theme:Strings.FitDescription}" ToolTipProperties.Text="{x:Static theme:Strings.FitDescription}" />
+            <Button Text="{x:Static theme:Strings.Follow}" ImageSource="{DynamicResource IconFollow}" ContentLayout="Left,8" Command="{Binding FollowCommand}"
+                    SemanticProperties.Description="{Binding FollowHint}" ToolTipProperties.Text="{Binding FollowHint}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
+                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Text="{x:Static theme:Strings.Fold}" ImageSource="{DynamicResource IconFold}" ContentLayout="Left,8" Command="{Binding FoldCommand}"
+                    SemanticProperties.Description="{Binding FoldHint}" ToolTipProperties.Text="{Binding FoldHint}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button" Binding="{Binding IsFolded}" Value="True">
+                        <Setter Property="BorderWidth" Value="2" />
+                        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+                        <Setter Property="FontAttributes" Value="Bold" />
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
+            <Button Style="{StaticResource IconButton}" ImageSource="{DynamicResource IconSettings}" Clicked="OnGridSettings"
+                    SemanticProperties.Description="{x:Static theme:Strings.GridSettings}" ToolTipProperties.Text="{x:Static theme:Strings.GridSettings}" />
+        </HorizontalStackLayout>
+
+        <Button x:Name="More" Style="{StaticResource IconButton}" ImageSource="{DynamicResource IconMore}" Clicked="OnMore" IsVisible="False" Grid.Column="1" HorizontalOptions="End"
+                SemanticProperties.Description="{x:Static theme:Strings.More}" ToolTipProperties.Text="{x:Static theme:Strings.More}" />
+    </Grid>
+</ContentView>

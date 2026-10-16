@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.SetupPanel"
+             x:DataType="state:WorkspaceState">
+    <Border>
+        <VerticalStackLayout Spacing="{DynamicResource SpaceM}">
+            <Label Text="{x:Static theme:Strings.SessionSection}" Style="{StaticResource SectionLabel}" />
+            <!-- Two fixed rows as in the mockup: the input takes the free width, the rest have fixed widths, so the panel height never
+                 depends on the window width or the content (a wrapping FlexLayout reserved an extra empty row). -->
+            <Grid ColumnDefinitions="*,Auto,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="{DynamicResource SpaceL}" RowSpacing="{DynamicResource SpaceM}">
+                <VerticalStackLayout Spacing="{DynamicResource SpaceXS}">
+                    <Label Text="{x:Static theme:Strings.MidiInput}" Style="{StaticResource SectionLabel}" />
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource SpaceS}">
+                        <controls:SelectField x:Name="InputField" Title="{x:Static theme:Strings.MidiInput}"
+                                              Placeholder="{x:Static theme:Strings.MidiInputNone}"
+                                              Items="{Binding Setup.Inputs, Mode=OneWay}" SelectedItem="{Binding Setup.SelectedInput, Mode=TwoWay}"
+                                              IsEnabled="{Binding Setup.IsUnlocked}" />
+                        <Button Grid.Column="1" Style="{StaticResource IconButton}" ImageSource="{DynamicResource IconRefresh}" Command="{Binding RefreshCommand}"
+                                SemanticProperties.Description="{x:Static theme:Strings.RefreshInputs}" ToolTipProperties.Text="{x:Static theme:Strings.RefreshInputs}" />
+                    </Grid>
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="1" Spacing="{DynamicResource SpaceXS}">
+                    <Label Text="{x:Static theme:Strings.TempoBpm}" Style="{StaticResource SectionLabel}" />
+                    <controls:NumberStepper Title="{x:Static theme:Strings.Tempo}" Minimum="{x:Static state:SetupState.MinBpm}" Maximum="{x:Static state:SetupState.MaxBpm}"
+                                            Value="{Binding Setup.Bpm, Mode=TwoWay}" IsEnabled="{Binding Setup.IsUnlocked}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="2" WidthRequest="{DynamicResource SetupFieldWidth}" Spacing="{DynamicResource SpaceXS}">
+                    <Label Text="{x:Static theme:Strings.Pulse}" Style="{StaticResource SectionLabel}" />
+                    <controls:SelectField x:Name="PulseField" Title="{x:Static theme:Strings.Pulse}" Items="{x:Static state:SetupState.PulseOptions}"
+                                          SelectedItem="{Binding Setup.PulseDenominator, Mode=TwoWay}" IsEnabled="{Binding Setup.IsUnlocked}" />
+                </VerticalStackLayout>
+                <VerticalStackLayout Grid.Column="3" WidthRequest="64" Spacing="{DynamicResource SpaceXS}">
+                    <Label Text="{x:Static theme:Strings.Meter}" Style="{StaticResource SectionLabel}" />
+                    <Label Text="{Binding Setup.MeterText}" HeightRequest="{DynamicResource ControlHeight}" VerticalTextAlignment="Center" />
+                </VerticalStackLayout>
+                <HorizontalStackLayout Grid.Row="1" Grid.ColumnSpan="4" Spacing="{DynamicResource SpaceL}">
+                    <VerticalStackLayout WidthRequest="240" Spacing="{DynamicResource SpaceXS}">
+                        <Label Text="{x:Static theme:Strings.StrongBeats}" Style="{StaticResource SectionLabel}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource SpaceS}">
+                            <Label Text="{Binding Setup.StrongBeatsSummary}" LineBreakMode="TailTruncation" VerticalTextAlignment="Center"
+                                   HeightRequest="{DynamicResource ControlHeight}" ToolTipProperties.Text="{Binding Setup.StrongBeatsSummary}" />
+                            <Button Grid.Column="1" Text="{x:Static theme:Strings.Edit}" Clicked="OnEditStrongBeats" IsEnabled="{Binding Setup.IsUnlocked}"
+                                    SemanticProperties.Description="{x:Static theme:Strings.EditStrongBeats}" ToolTipProperties.Text="{x:Static theme:Strings.EditStrongBeats}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout WidthRequest="{DynamicResource SetupFieldWidth}" Spacing="{DynamicResource SpaceXS}">
+                        <Label Text="{x:Static theme:Strings.CountIn}" Style="{StaticResource SectionLabel}" />
+                        <controls:SelectField x:Name="CountInField" Title="{x:Static theme:Strings.CountIn}" Items="{x:Static state:SetupState.CountInOptions}"
+                                              SelectedItem="{Binding Setup.CountInBars, Mode=TwoWay}" IsEnabled="{Binding Setup.IsUnlocked}" />
+                    </VerticalStackLayout>
+                    <Button Style="{StaticResource PrimaryButton}" Text="{x:Static theme:Strings.StartSession}" ImageSource="{DynamicResource IconRecord}" ContentLayout="Left,8"
+                            Command="{Binding StartCommand}" VerticalOptions="End" WidthRequest="168" />
+                </HorizontalStackLayout>
+            </Grid>
+            <Label Text="{x:Static theme:Strings.NoInputsHint}" Style="{StaticResource SecondaryLabel}" IsVisible="{Binding Setup.HasNoInputs}" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

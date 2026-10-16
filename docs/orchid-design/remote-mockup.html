@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orchid Remote mockup</title>
+<style>
+  /* Tokens from UI-SPEC.md so the remote matches the desktop app. */
+  :root {
+    --bg: #F6F5F8; --surface: #FFFFFF; --subtle: #F0EFF4; --text: #292735; --muted: #706B7D;
+    --border: #E4E1EB; --accent: #755B9B; --on-accent: #FFFFFF; --live: #2B5844; --live-bg: #DCEBE4;
+    --warn: #754A17; --warn-bg: #F7DDBA;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17171D; --surface: #202027; --subtle: #292932; --text: #E9E7EF; --muted: #AAA5B8;
+      --border: #383640; --accent: #C1A8E4; --on-accent: #21142E; --live: #C3E3D0; --live-bg: #29473C;
+      --warn: #FFE4BC; --warn-bg: #715133;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17171D; --surface: #202027; --subtle: #292932; --text: #E9E7EF; --muted: #AAA5B8;
+    --border: #383640; --accent: #C1A8E4; --on-accent: #21142E; --live: #C3E3D0; --live-bg: #29473C;
+    --warn: #FFE4BC; --warn-bg: #715133;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.4 system-ui, "Segoe UI", Roboto, sans-serif; }
+  .page { max-width: 1280px; margin: 0 auto; padding: 24px 16px 48px; }
+  header.top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  h1 { font-size: 22px; margin: 0; font-weight: 600; }
+  h2 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 32px 0 12px; }
+  p.note { color: var(--muted); margin: 4px 0 0; max-width: 70ch; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .theme-toggle { background: var(--subtle); border: 1px solid var(--border); border-radius: 7px; padding: 6px 12px; }
+
+  .phones { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .phone-wrap { width: 280px; }
+  .caption { font-size: 12px; color: var(--muted); margin: 0 0 8px; }
+  .caption b { color: var(--text); font-weight: 600; }
+  .phone { width: 280px; height: 560px; border: 1px solid var(--border); border-radius: 22px; background: var(--bg);
+           display: flex; flex-direction: column; overflow: hidden; }
+  .bar { display: flex; align-items: center; gap: 8px; padding: 14px 16px 10px; border-bottom: 1px solid var(--border); background: var(--surface); }
+  .bar .name { font-weight: 600; }
+  .bar .where { color: var(--muted); font-size: 12px; margin-left: auto; display: flex; align-items: center; gap: 6px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }
+  .dot.ok { background: var(--live); } .dot.rec { background: var(--accent); } .dot.bad { background: var(--warn); }
+  .body { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .lead { font-size: 18px; font-weight: 600; margin: 0; }
+  .muted { color: var(--muted); font-size: 12px; }
+
+  .cells { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .cells input { width: 100%; height: 44px; text-align: center; font: 600 18px ui-monospace, "Cascadia Mono", Consolas, monospace;
+                 text-transform: uppercase; background: var(--surface); color: var(--text); border: 1px solid var(--border);
+                 border-radius: 7px; padding: 0; }
+  .cells input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .btn { width: 100%; height: 48px; border-radius: 8px; border: 1px solid var(--border); background: var(--subtle); font-weight: 600;
+         display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn svg { width: 18px; height: 18px; flex: none; }
+  .verify { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+  .verify .word { font-size: 28px; font-weight: 600; letter-spacing: .02em; margin: 4px 0; }
+
+  .time { text-align: center; padding: 8px 0 0; }
+  .time .t { font-size: 44px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .time .s { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; justify-content: center; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .bpm { display: grid; grid-template-columns: 56px 1fr 56px; align-items: center; gap: 8px; }
+  .bpm .step { height: 56px; border-radius: 8px; border: 1px solid var(--border); background: var(--subtle); display: grid; place-items: center; }
+  .bpm .step:disabled { opacity: .45; cursor: not-allowed; }
+  .bpm .step svg { width: 22px; height: 22px; }
+  .bpm .val { text-align: center; }
+  .bpm .val b { font-size: 40px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1; }
+  .bpm .val span { display: block; font-size: 11px; letter-spacing: .08em; color: var(--muted); }
+  .seg { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-top: 12px; }
+  .seg button { height: 40px; border: 0; border-right: 1px solid var(--border); background: var(--subtle); }
+  .seg button:last-child { border-right: 0; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+  .seg button:disabled { opacity: .45; cursor: not-allowed; }
+  .beats-row { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .beats-label { font-size: 10px; letter-spacing: .08em; color: var(--muted); }
+  .beats-row button { height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--subtle); }
+  .beats-row button:disabled { opacity: .45; cursor: not-allowed; }
+  .scrim { position: relative; flex: 1; }
+  .scrim::before { content: ""; position: absolute; inset: 0; background: rgb(0 0 0 / .45); }
+  .sheet { position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--border); border-radius: 14px 14px 0 0; padding: 14px 14px 18px; display: grid; gap: 12px; }
+  .sheet-head { display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 16px; }
+  .sheet-head span { width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; background: var(--subtle); font-weight: 400; }
+  .beat-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)); gap: 10px 6px; }
+  .beat-bars .column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .beat-bars .block { width: min(100%, 40px); height: 34px; padding: 0; border-radius: 6px; border: 1px solid transparent; cursor: pointer; }
+  .beat-bars .on { background: var(--accent); }
+  .beat-bars .weak { background: color-mix(in srgb, var(--accent) 35%, var(--surface)); }
+  .beat-bars .off { background: var(--surface); border-color: var(--border); }
+  .beat-bars .number { font-size: 11px; color: var(--muted); }
+  .lock { font-size: 12px; color: var(--warn); background: var(--warn-bg); border-radius: 6px; padding: 6px 10px; }
+  .device { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .spacer { flex: 1; }
+
+  /* PC side */
+  .pc { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; max-width: 760px; }
+  .pc .titlebar { padding: 10px 16px; border-bottom: 1px solid var(--border); font-weight: 600; }
+  .pc .row { display: flex; align-items: center; gap: 16px; padding: 14px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pc .row:last-child { border-bottom: 0; }
+  .pc .label { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; min-width: 110px; }
+  .code { font: 600 22px ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .12em; }
+  .pill { font-size: 12px; background: var(--live-bg); color: var(--live); border-radius: 999px; padding: 2px 10px; }
+  .pill.off { background: var(--subtle); color: var(--muted); }
+  .sw { width: 38px; height: 22px; border-radius: 11px; background: var(--accent); position: relative; border: 0; padding: 0; }
+  .sw::after { content: ""; position: absolute; top: 3px; left: 19px; width: 16px; height: 16px; border-radius: 50%; background: var(--on-accent); }
+  .pc .actions { margin-left: auto; display: flex; gap: 8px; }
+  .pc .actions button { height: 34px; padding: 0 14px; border-radius: 7px; border: 1px solid var(--border); background: var(--subtle); }
+  .pc .actions .primary { background: var(--accent); color: var(--on-accent); border-color: transparent; }
+  .pending { background: var(--warn-bg); color: var(--warn); }
+  .pending .label { color: inherit; opacity: .8; }
+  .flow { color: var(--muted); max-width: 70ch; }
+  .flow li { margin: 4px 0; }
+  code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px; background: var(--subtle); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Orchid Remote</h1>
+      <p class="note">Mockup. The phone is a remote control: it shows session state and elapsed time and sends Start/Stop, BPM and pulse. The metronome click and MIDI recording stay on the PC; no beats travel over the network.</p>
+    </div>
+    <button class="theme-toggle" id="theme" type="button">Light / Dark</button>
+  </header>
+
+  <h2>Phone, in order of use</h2>
+  <div class="phones">
+
+    <div class="phone-wrap">
+      <p class="caption"><b>1 · Enter code</b> — code is shown in Orchid on the PC</p>
+      <div class="phone">
+        <div class="bar"><span class="name">Orchid Remote</span></div>
+        <div class="body">
+          <p class="lead">Connect to Orchid</p>
+          <p class="muted" style="margin:0">Enter the 8-character code from the Remote access panel on your PC. The code works once and expires after 5 minutes.</p>
+          <div class="cells" id="cells" aria-label="8-character pairing code">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 1">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 2">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 3">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 4">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 5">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 6">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 7">
+            <input maxlength="1" inputmode="text" autocapitalize="characters" autocomplete="off" aria-label="Character 8">
+          </div>
+          <div class="spacer"></div>
+          <button class="btn primary" type="button">Connect</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <p class="caption"><b>2 · Waiting for approval</b> — same word on both screens</p>
+      <div class="phone">
+        <div class="bar"><span class="name">Orchid Remote</span></div>
+        <div class="body">
+          <p class="lead">Confirm on your PC</p>
+          <p class="muted" style="margin:0">Approve this request in Orchid. Check that the word below matches the one on the PC before you approve.</p>
+          <div class="verify">
+            <div class="muted">Verification word</div>
+            <div class="word">Fern 47</div>
+          </div>
+          <div class="device"><span>This device</span><span>Pixel 8 · Chrome</span></div>
+          <div class="spacer"></div>
+          <button class="btn" type="button">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <p class="caption"><b>3 · Ready</b> — (try the controls)</p>
+      <div class="phone" id="remote">
+        <div class="bar"><span class="name">Orchid</span><span class="where"><span class="dot ok" id="dot"></span><span id="conn">Connected</span></span></div>
+        <div class="body">
+          <div class="time">
+            <div class="t" id="elapsed">00:00.0</div>
+            <div class="s"><span id="state">Ready · 4/4</span></div>
+          </div>
+          <div class="card">
+            <div class="bpm">
+              <button class="step" id="minus" type="button" aria-label="Decrease BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+              <div class="val"><b id="bpm">120</b><span>BPM</span></div>
+              <button class="step" id="plus" type="button" aria-label="Increase BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>
+            </div>
+            <div class="seg" id="pulse" role="group" aria-label="Pulse">
+              <button type="button" aria-pressed="false">1/1</button>
+              <button type="button" aria-pressed="false">1/2</button>
+              <button type="button" aria-pressed="true">1/4</button>
+              <button type="button" aria-pressed="false">1/8</button>
+              <button type="button" aria-pressed="false">1/16</button>
+            </div>
+            <div class="beats-row">
+              <div><div class="beats-label">STRONG BEATS</div><div id="beats-summary">Beats 1, 3 of 4</div></div>
+              <button type="button" id="beats-edit">Edit</button>
+            </div>
+          </div>
+          <div class="lock" id="lock" hidden>Locked while recording</div>
+          <div class="device"><span>MIDI input</span><span>Digital Piano · USB MIDI</span></div>
+          <div class="spacer"></div>
+          <button class="btn primary" id="go" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+            <span id="golabel">Start session</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <p class="caption"><b>4 · Lost</b> — PC revoked this device or is unreachable</p>
+      <div class="phone">
+        <div class="bar"><span class="name">Orchid</span><span class="where"><span class="dot bad"></span>Disconnected</span></div>
+        <div class="body">
+          <p class="lead">Connection lost</p>
+          <p class="muted" style="margin:0">Orchid on the PC is not answering, or this device was removed in Remote access. Controls are disabled so nothing is sent blindly.</p>
+          <div class="card" style="opacity:.6">
+            <div class="bpm">
+              <button class="step" disabled aria-label="Decrease BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+              <div class="val"><b>120</b><span>BPM · last known</span></div>
+              <button class="step" disabled aria-label="Increase BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>
+            </div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn primary" type="button">Reconnect</button>
+          <button class="btn" type="button">Enter a new code</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-wrap">
+      <p class="caption"><b>5 · Strong beats</b> — modal sheet from Edit; tap the top block of a bar</p>
+      <div class="phone" style="position:relative">
+        <div class="bar"><span class="name">Orchid</span><span class="where"><span class="dot ok"></span>Connected</span></div>
+        <div class="scrim"></div>
+        <div class="sheet">
+          <div class="sheet-head">Strong beats <span>×</span></div>
+          <div class="beat-bars" id="bars" role="group" aria-label="Strong beats"></div>
+          <div class="muted">A tall bar is a strong beat, a short bar is weak. Tap the top of a bar to switch it; any beat can be strong.</div>
+          <div class="muted">Beats in this meter: <button type="button" id="meter" style="margin-left:6px;height:30px;padding:0 12px;border-radius:6px;border:1px solid var(--border);background:var(--subtle)">4</button> (tap to try 3, 6, 8)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>PC: Remote access panel in the Orchid window</h2>
+  <div class="pc">
+    <div class="titlebar">Remote access</div>
+    <div class="row">
+      <span class="label">Share on LAN</span>
+      <button class="sw" type="button" aria-label="Share on local network" aria-pressed="true"></button>
+      <span class="pill">On</span>
+      <span class="muted">Off by default. Turns itself off when Orchid closes.</span>
+    </div>
+    <div class="row">
+      <span class="label">Address</span>
+      <code>http://192.168.1.23:47318</code>
+      <span class="muted">Open it on the phone, same Wi-Fi.</span>
+    </div>
+    <div class="row">
+      <span class="label">Pairing code</span>
+      <span class="code">K7QM 4TXD</span>
+      <span class="muted">expires in 04:32 · one use</span>
+      <div class="actions"><button type="button">New code</button></div>
+    </div>
+    <div class="row pending">
+      <span class="label">Request</span>
+      <div>
+        <div><b>Pixel 8 · Chrome</b> · 192.168.1.41</div>
+        <div>Verification word: <b>Fern 47</b></div>
+      </div>
+      <div class="actions"><button type="button">Deny</button><button class="primary" type="button">Approve</button></div>
+    </div>
+    <div class="row">
+      <span class="label">Devices</span>
+      <div><b>Pixel 8</b> <span class="muted">· connected 12 min · last command Start session</span></div>
+      <div class="actions"><button type="button">Revoke</button></div>
+    </div>
+  </div>
+
+  <h2>Rules this mockup assumes</h2>
+  <ul class="flow">
+    <li>Commands: start, stop, set BPM (30–240), set pulse, set strong beats (any beat of the measure, one flag per beat; edited in a modal, the control screen only shows a summary). The PC rejects settings changes while recording; the phone shows them locked.</li>
+    <li>The phone sends the token in an <code>Authorization</code> header, not a cookie, so other web pages cannot fire commands at the PC.</li>
+    <li>Elapsed time is displayed from state sent by the PC. It is a display only, never used to timestamp notes.</li>
+    <li>Nothing about beats, ticks or key presses is shown on the phone.</li>
+  </ul>
+</div>
+
+<script>
+  // Mockup behavior only: nothing is sent anywhere.
+  const root = document.documentElement;
+  document.getElementById('theme').addEventListener('click', () => {
+    const dark = getComputedStyle(root).getPropertyValue('--bg').trim() === '#17171D';
+    root.dataset.theme = dark ? 'light' : 'dark';
+  });
+
+  const cells = [...document.querySelectorAll('#cells input')];
+  cells.forEach((cell, i) => {
+    cell.addEventListener('input', () => { cell.value = cell.value.replace(/[^a-z0-9]/gi, '').toUpperCase(); if (cell.value && cells[i + 1]) cells[i + 1].focus(); });
+    cell.addEventListener('keydown', e => { if (e.key === 'Backspace' && !cell.value && cells[i - 1]) cells[i - 1].focus(); });
+    cell.addEventListener('paste', e => {
+      const text = (e.clipboardData.getData('text') || '').replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, 8);
+      if (!text) return;
+      e.preventDefault();
+      cells.forEach((c, j) => c.value = text[j] || '');
+      (cells[Math.min(text.length, 7)]).focus();
+    });
+  });
+
+  let bpm = 120, recording = false, seconds = 0, timer = null;
+  const $ = id => document.getElementById(id);
+  const pulseButtons = [...document.querySelectorAll('#pulse button')];
+  const controls = [$('minus'), $('plus'), ...pulseButtons, $('beats-edit')];
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + (s % 60).toFixed(1).padStart(4, '0');
+
+  function setBpm(v) { bpm = Math.min(240, Math.max(30, v)); $('bpm').textContent = bpm; }
+  $('minus').addEventListener('click', () => setBpm(bpm - 1));
+  $('plus').addEventListener('click', () => setBpm(bpm + 1));
+  pulseButtons.forEach(b => b.addEventListener('click', () => pulseButtons.forEach(x => x.setAttribute('aria-pressed', String(x === b)))));
+
+  // The sheet: the same bars as the real component, so the mockup shows how any meter lays out.
+  let beats = [true, false, true, false];
+  const describe = b => { const s = b.flatMap((f, i) => f ? [i + 1] : []); return !s.length ? 'No strong beats' : s.length === b.length ? `Every beat is strong (${b.length})` : s.length === 1 ? `Beat ${s[0]} of ${b.length}` : `Beats ${s.join(', ')} of ${b.length}`; };
+  function drawBars() {
+    $('bars').replaceChildren(...beats.map((strong, i) => {
+      const column = Object.assign(document.createElement('div'), { className: 'column' });
+      const top = Object.assign(document.createElement('button'), { type: 'button', className: 'block ' + (strong ? 'on' : 'off') });
+      const bottom = Object.assign(document.createElement('button'), { type: 'button', className: 'block ' + (strong ? 'on' : 'weak') });
+      top.setAttribute('aria-label', `Beat ${i + 1}: ${strong ? 'strong' : 'weak'}, activate to make it ${strong ? 'weak' : 'strong'}`);
+      bottom.setAttribute('aria-label', `Beat ${i + 1}: make weak`);
+      top.addEventListener('click', () => { beats[i] = !beats[i]; drawBars(); });
+      bottom.addEventListener('click', () => { beats[i] = false; drawBars(); });
+      column.append(top, bottom, Object.assign(document.createElement('span'), { className: 'number', textContent: String(i + 1) }));
+      return column;
+    }));
+    $('beats-summary').textContent = describe(beats);
+    $('meter').textContent = beats.length;
+  }
+  $('meter').addEventListener('click', () => {
+    const sizes = [3, 4, 6, 8]; const next = sizes[(sizes.indexOf(beats.length) + 1) % sizes.length];
+    beats = Array.from({ length: next }, (_, i) => i === 0);
+    drawBars();
+  });
+  drawBars();
+
+  $('go').addEventListener('click', () => {
+    recording = !recording;
+    controls.forEach(c => c.disabled = recording);
+    $('lock').hidden = !recording;
+    $('golabel').textContent = recording ? 'Stop' : 'Start session';
+    $('go').querySelector('svg').innerHTML = recording ? '<rect x="5" y="5" width="14" height="14" rx="2"/>' : '<circle cx="12" cy="12" r="9"/>';
+    $('dot').className = 'dot ' + (recording ? 'rec' : 'ok');
+    $('state').textContent = recording ? 'Recording' : 'Stopped · recording kept in memory';
+    clearInterval(timer);
+    if (recording) { seconds = 0; timer = setInterval(() => { seconds += .1; $('elapsed').textContent = fmt(seconds); }, 100); }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Orchid Remote</title>
+<link rel="stylesheet" href="remote.css">
+<link rel="stylesheet" href="components/components.css">
+</head>
+<body>
+<main class="app">
+
+  <section data-view="pair" hidden>
+    <header class="bar"><span class="name">Orchid Remote</span></header>
+    <div class="body">
+      <h1 class="lead">Connect to Orchid</h1>
+      <p class="muted">Enter the 8-character code from the Remote access panel on your PC. The code works once and expires after 5 minutes.</p>
+      <div class="cells" id="cells" role="group" aria-label="8-character pairing code"></div>
+      <p class="error" id="pair-error" role="alert" hidden></p>
+      <div class="spacer"></div>
+      <button class="btn primary" id="connect" type="button" disabled>Connect</button>
+    </div>
+  </section>
+
+  <section data-view="waiting" hidden>
+    <header class="bar"><span class="name">Orchid Remote</span></header>
+    <div class="body">
+      <h1 class="lead">Confirm on your PC</h1>
+      <p class="muted">Approve this request in Orchid. Check that the word below matches the one on the PC before you approve.</p>
+      <div class="verify" aria-live="polite">
+        <div class="muted">Verification word</div>
+        <div class="word" id="verification">&nbsp;</div>
+      </div>
+      <div class="meta"><span>This device</span><span id="device-name"></span></div>
+      <p class="error" id="wait-error" role="alert" hidden></p>
+      <div class="spacer"></div>
+      <button class="btn" id="cancel" type="button">Cancel</button>
+    </div>
+  </section>
+
+  <section data-view="control" hidden>
+    <header class="bar">
+      <span class="name">Orchid</span>
+      <span class="where"><span class="dot ok" id="dot"></span><span id="conn">Connected</span></span>
+    </header>
+    <div class="body">
+      <div class="time">
+        <div class="t" id="elapsed" aria-label="Elapsed recording time">00:00.0</div>
+        <div class="s" id="status" aria-live="polite">Ready · 4/4</div>
+      </div>
+      <div class="card">
+        <div class="bpm">
+          <button class="step" id="minus" type="button" aria-label="Decrease BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+          <div class="val"><b id="bpm">120</b><span>BPM</span></div>
+          <button class="step" id="plus" type="button" aria-label="Increase BPM"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5v14"/></svg></button>
+        </div>
+        <div class="seg" id="pulse" role="group" aria-label="Pulse"></div>
+        <div class="beats-row">
+          <div>
+            <div class="beats-label">STRONG BEATS</div>
+            <div id="beats-summary"></div>
+          </div>
+          <button class="btn compact" id="beats-edit" type="button">Edit</button>
+        </div>
+      </div>
+      <p class="lock" id="lock" hidden>Locked while recording</p>
+      <p class="error" id="control-error" role="alert" hidden></p>
+      <div class="meta"><span>MIDI input</span><span id="midi">–</span></div>
+      <div class="spacer"></div>
+      <button class="btn primary" id="go" type="button">
+        <svg id="go-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+        <span id="go-label">Start session</span>
+      </button>
+      <button class="link" id="disconnect" type="button">Disconnect this device</button>
+    </div>
+  </section>
+
+  <section data-view="lost" hidden>
+    <header class="bar"><span class="name">Orchid</span><span class="where"><span class="dot bad"></span>Disconnected</span></header>
+    <div class="body">
+      <h1 class="lead" id="lost-title">Connection lost</h1>
+      <p class="muted" id="lost-text"></p>
+      <div class="spacer"></div>
+      <button class="btn primary" id="reconnect" type="button">Reconnect</button>
+      <button class="btn" id="new-code" type="button">Enter a new code</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Transport. The mock implements the contract in docs/orchid-design/REMOTE-DOD.md; replace this tag with the real client. -->
+<script src="mock/mock-api.js"></script>
+<script src="components/modal.js"></script>
+<script src="components/beat-bars.js"></script>
+<script src="remote.js"></script>
+<script src="mock/mock-pc.js"></script>
+</body>
+</html>

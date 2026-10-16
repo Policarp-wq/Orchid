@@ -1,0 +1,13 @@
+<Project Sdk="MSTest.Sdk/4.4.1">
+    <PropertyGroup>
+        <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TestingExtensionsProfile>None</TestingExtensionsProfile>
+        <!-- The referenced WinUI head makes this a Windows App SDK build, whose PRI step warns (PRI263) about MSTest's localized resources. -->
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../Orchid.Windows/Orchid.Windows.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,0 +1,23 @@
+{
+  "profiles": {
+    "Orchid (MIDI)": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    },
+    "Orchid (fake input)": {
+      "commandName": "Project",
+      "commandLineArgs": "--fake",
+      "nativeDebugging": false
+    },
+    "Orchid (review FiveMinutes)": {
+      "commandName": "Project",
+      "commandLineArgs": "--fake --fixture FiveMinutes",
+      "nativeDebugging": false
+    },
+    "Orchid (review OneHour, dark)": {
+      "commandName": "Project",
+      "commandLineArgs": "--fake --fixture OneHour --theme dark",
+      "nativeDebugging": false
+    }
+  }
+}

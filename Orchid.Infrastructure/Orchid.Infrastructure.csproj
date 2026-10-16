@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Orchid.Application\Orchid.Application.csproj" />
+        <PackageReference Include="NAudio.Wasapi" Version="3.1.0" />
+        <PackageReference Include="Melanchall.DryWetMidi" Version="8.0.3" />
+        <InternalsVisibleTo Include="Orchid.Infrastructure.Tests" />
+    </ItemGroup>
+
+</Project>

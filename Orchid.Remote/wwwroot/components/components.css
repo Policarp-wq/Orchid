@@ -1,0 +1,23 @@
+/* Shared components. They read the same tokens as the page; --grid-bar and --grid-tick are Theme.xaml GridBar and GridTick.
+   Strong beats use the bar color, not the accent: magenta is reserved for "now". */
+:root { --grid-bar: #3E4048; --grid-tick: #7B7F89; }
+@media (prefers-color-scheme: dark) { :root { --grid-bar: #A9ABB3; --grid-tick: #6C6F79; } }
+
+dialog.modal { border: 0; padding: 0; background: transparent; color: var(--text); width: 100%; max-width: 560px; margin: auto auto 0; }
+dialog.modal::backdrop { background: rgb(0 0 0 / .5); }
+@media (min-width: 640px) { dialog.modal { margin: auto; } }
+.modal-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px 12px 0 0; padding: 16px 16px 24px; display: grid; gap: 16px; }
+@media (min-width: 640px) { .modal-card { border-radius: 12px; } }
+.modal-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.modal-title { margin: 0; font-size: 22px; font-weight: 600; }
+.modal-close { width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--subtle); font-size: 22px; line-height: 1; cursor: pointer; color: inherit; }
+
+/* Columns share the width but never drop below 28 px; a long measure wraps onto more rows. */
+.beat-bars { display: grid; grid-template-columns: repeat(auto-fit, minmax(28px, 1fr)); gap: 12px 8px; }
+.beat-bars .column { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.beat-bars .block { flex: none; width: min(100%, 56px); height: 44px; padding: 0; border-radius: 6px; border: 1px solid transparent; cursor: pointer; color: inherit; }
+.beat-bars .block.on { background: var(--grid-bar); }
+.beat-bars .block.weak { background: var(--grid-tick); }
+.beat-bars .block.off { background: var(--surface); border-color: var(--border); }
+.beat-bars .block:disabled { opacity: .45; cursor: not-allowed; }
+.beat-bars .number { font-size: 12px; color: var(--muted); text-align: center; }

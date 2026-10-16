@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- The theme a head merges into its Application.Resources: tokens, metrics, icons and styles. Sizes are DynamicResource keys from
+     Metrics.xaml so a head can override them in its own resources; colors are AppThemeBinding over the token pairs. -->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+                    x:Class="Orchid.Ui.Theme.Styles">
+    <ResourceDictionary.MergedDictionaries>
+        <theme:ColorTokens />
+        <theme:Metrics />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!-- Lucide icons (ISC, docs/orchid-design/THIRD-PARTY-NOTICES.txt) as font glyphs, so they stay on real Buttons and follow the theme. -->
+    <FontImageSource x:Key="IconRefresh" FontFamily="Lucide" Glyph="&#xE145;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconPlay" FontFamily="Lucide" Glyph="&#xE13C;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconPause" FontFamily="Lucide" Glyph="&#xE12E;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconRewind" FontFamily="Lucide" Glyph="&#xE15F;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconOpenLog" FontFamily="Lucide" Glyph="&#xE247;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconRecord" FontFamily="Lucide" Glyph="&#xE076;" Size="16" Color="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
+    <FontImageSource x:Key="IconStop" FontFamily="Lucide" Glyph="&#xE167;" Size="16" Color="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
+    <FontImageSource x:Key="IconClose" FontFamily="Lucide" Glyph="&#xE1B2;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconFlower" FontFamily="Lucide" Glyph="&#xE2D4;" Size="24" Color="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    <FontImageSource x:Key="IconZoomIn" FontFamily="Lucide" Glyph="&#xE1B6;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconZoomOut" FontFamily="Lucide" Glyph="&#xE1B7;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconExpand" FontFamily="Lucide" Glyph="&#xE21A;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconFollow" FontFamily="Lucide" Glyph="&#xE1DA;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconFold" FontFamily="Lucide" Glyph="&#xE43C;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconSettings" FontFamily="Lucide" Glyph="&#xE29A;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconMore" FontFamily="Lucide" Glyph="&#xE0B6;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconLock" FontFamily="Lucide" Glyph="&#xE10B;" Size="16" Color="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+    <FontImageSource x:Key="IconAlert" FontFamily="Lucide" Glyph="&#xE193;" Size="20" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconChevronDown" FontFamily="Lucide" Glyph="&#xE06D;" Size="16" Color="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+    <FontImageSource x:Key="IconMinus" FontFamily="Lucide" Glyph="&#xE11C;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconPlus" FontFamily="Lucide" Glyph="&#xE13D;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconCheck" FontFamily="Lucide" Glyph="&#xE06C;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+    <FontImageSource x:Key="IconPitchZoom" FontFamily="Lucide" Glyph="&#xE211;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+
+    <Style TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontBody}" />
+    </Style>
+    <Style x:Key="SecondaryLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontSecondary}" />
+    </Style>
+    <Style x:Key="SectionLabel" TargetType="Label" BasedOn="{StaticResource SecondaryLabel}">
+        <Setter Property="FontSize" Value="{DynamicResource FontCaption}" />
+        <Setter Property="CharacterSpacing" Value="1" />
+    </Style>
+    <Style x:Key="TitleLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource FontTitle}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+    <Style x:Key="DisplayLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource FontDisplay}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+    <Style x:Key="CountLabel" TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource FontCount}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    </Style>
+
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SubtleSurfaceLight}, Dark={StaticResource SubtleSurfaceDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontSize" Value="{DynamicResource FontBody}" />
+        <Setter Property="CornerRadius" Value="7" />
+        <Setter Property="HeightRequest" Value="{DynamicResource ControlHeight}" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource HoverSurfaceLight}, Dark={StaticResource HoverSurfaceDark}}" />
+                            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PressedSurfaceLight}, Dark={StaticResource PressedSurfaceDark}}" />
+                            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.45" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}" />
+    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
+        <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentHoverLight}, Dark={StaticResource AccentHoverDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentPressedLight}, Dark={StaticResource AccentPressedDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.45" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+        <Setter Property="WidthRequest" Value="{DynamicResource IconButtonSize}" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <!-- Blocks of the beat bars: bar color = strong, tick color = the single block of a weak beat, empty = unused slot.
+         The accent marks only the current beat of the live view: magenta is reserved for "now". Hover and press change only the
+         brightness, because the colors carry the strong/weak meaning; a read-only bar ignores input and keeps its colors. -->
+    <Style x:Key="BeatBlockOn" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.8" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.65" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled" />
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+    <Style x:Key="BeatBlockWeak" TargetType="Button" BasedOn="{StaticResource BeatBlockOn}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+    </Style>
+    <Style x:Key="BeatBlockOff" TargetType="Button" BasedOn="{StaticResource BeatBlockOn}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+    </Style>
+    <Style x:Key="BeatBlockNow" TargetType="Button" BasedOn="{StaticResource BeatBlockOn}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    </Style>
+
+    <Style TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="Padding" Value="{DynamicResource PanelPadding}" />
+    </Style>
+    <!-- A device, audio, save or load problem: icon and text on a neutral surface with a graphite outline, never the accent. -->
+    <Style x:Key="Banner" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SubtleSurfaceLight}, Dark={StaticResource SubtleSurfaceDark}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="Padding" Value="12,6" />
+    </Style>
+    <Style x:Key="Chip" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SubtleSurfaceLight}, Dark={StaticResource SubtleSurfaceDark}}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 6" />
+        <Setter Property="Padding" Value="8,4" />
+    </Style>
+    <!-- A key held at the position is "now": the selected-note colors. A key sounding only because of the pedal stays neutral. -->
+    <Style x:Key="HeldChip" TargetType="Border" BasedOn="{StaticResource Chip}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SelectedFillLight}, Dark={StaticResource SelectedFillDark}}" />
+    </Style>
+    <Style x:Key="HeldChipText" TargetType="Label">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource SelectedTextLight}, Dark={StaticResource SelectedTextDark}}" />
+    </Style>
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SubtleSurfaceLight}, Dark={StaticResource SubtleSurfaceDark}}" />
+        <Setter Property="FontSize" Value="{DynamicResource FontBody}" />
+    </Style>
+    <Style TargetType="Switch">
+        <Setter Property="OnColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
+    </Style>
+
+    <!-- Legend swatches repeat the colors the drawings use, so both change with the tokens. -->
+    <Style x:Key="LegendItem" TargetType="HorizontalStackLayout">
+        <Setter Property="Spacing" Value="{DynamicResource SpaceS}" />
+        <Setter Property="Margin" Value="0,0,16,4" />
+    </Style>
+    <Style x:Key="LegendMeasure" TargetType="BoxView">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="WidthRequest" Value="2" />
+        <Setter Property="HeightRequest" Value="12" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+    <Style x:Key="LegendBeat" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridBeatLight}, Dark={StaticResource GridBeatDark}}" />
+        <Setter Property="WidthRequest" Value="1" />
+    </Style>
+    <Style x:Key="LegendStrong" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="Opacity" Value="0.2" />
+        <Setter Property="WidthRequest" Value="12" />
+    </Style>
+    <Style x:Key="LegendSubdivision" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+        <Setter Property="WidthRequest" Value="1" />
+        <Setter Property="HeightRequest" Value="1.5" />
+    </Style>
+    <Style x:Key="LegendNote" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource NoteFillLight}, Dark={StaticResource NoteFillDark}}" />
+        <Setter Property="WidthRequest" Value="18" />
+        <Setter Property="CornerRadius" Value="3" />
+    </Style>
+    <Style x:Key="LegendSelected" TargetType="BoxView" BasedOn="{StaticResource LegendNote}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource SelectedFillLight}, Dark={StaticResource SelectedFillDark}}" />
+    </Style>
+    <Style x:Key="LegendPedal" TargetType="BoxView" BasedOn="{StaticResource LegendNote}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource NoteStrokeLight}, Dark={StaticResource NoteStrokeDark}}" />
+        <Setter Property="Opacity" Value="0.6" />
+        <Setter Property="HeightRequest" Value="6" />
+    </Style>
+    <Style x:Key="LegendSustain" TargetType="BoxView" BasedOn="{StaticResource LegendNote}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource NoteStrokeLight}, Dark={StaticResource NoteStrokeDark}}" />
+        <Setter Property="Opacity" Value="0.3" />
+    </Style>
+</ResourceDictionary>

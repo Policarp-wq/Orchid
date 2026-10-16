@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.AppHeader"
+             x:DataType="state:WorkspaceState">
+    <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="{DynamicResource SpaceL}" MinimumHeightRequest="{DynamicResource IconButtonSize}">
+        <HorizontalStackLayout Spacing="{DynamicResource SpaceM}" VerticalOptions="Center">
+            <Image Source="{DynamicResource IconFlower}" WidthRequest="24" HeightRequest="24" VerticalOptions="Center" />
+            <Label Text="{x:Static theme:Strings.AppName}" Style="{StaticResource TitleLabel}" VerticalOptions="Center" />
+            <Label Text="{x:Static theme:Strings.AppSubtitle}" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+
+        <Label Grid.Column="1" Text="{Binding ModeText}" Style="{StaticResource SectionLabel}" VerticalOptions="Center" />
+
+        <!-- Review: the file, tempo and save state. The file name takes the free space and is truncated. -->
+        <Grid Grid.Column="2" IsVisible="{Binding IsReview}" ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource SpaceL}" VerticalOptions="Center">
+            <Label Text="{Binding Status.FileName}" LineBreakMode="TailTruncation" ToolTipProperties.Text="{Binding Status.FileName}" />
+            <Label Grid.Column="1" Text="{Binding Review.ContextText}" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+            <Label Grid.Column="2" Text="{Binding Status.SaveText}" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Live: the locked settings and the small elapsed time. -->
+        <HorizontalStackLayout Grid.Column="2" IsVisible="{Binding IsLive}" Spacing="{DynamicResource SpaceM}" VerticalOptions="Center">
+            <Image Source="{DynamicResource IconLock}" WidthRequest="16" HeightRequest="16" VerticalOptions="Center"
+                   SemanticProperties.Description="{x:Static theme:Strings.LockedSettings}" ToolTipProperties.Text="{x:Static theme:Strings.LockedSettings}" />
+            <Label Text="{Binding Live.SettingsText}" Style="{StaticResource SecondaryLabel}" VerticalOptions="Center" />
+            <Label Text="{Binding Live.ElapsedText}" WidthRequest="{DynamicResource TimeReadoutWidth}" VerticalOptions="Center"
+                   SemanticProperties.Description="{x:Static theme:Strings.Elapsed}" ToolTipProperties.Text="{x:Static theme:Strings.Elapsed}" />
+        </HorizontalStackLayout>
+
+        <Button Grid.Column="3" IsVisible="{Binding IsLive}" Style="{StaticResource PrimaryButton}" Command="{Binding StopCommand}"
+                Text="{x:Static theme:Strings.Stop}" ImageSource="{DynamicResource IconStop}" ContentLayout="Left,8"
+                WidthRequest="{DynamicResource StopButtonWidth}" VerticalOptions="Center"
+                SemanticProperties.Description="{x:Static theme:Strings.StopRecording}" ToolTipProperties.Text="{x:Static theme:Strings.StopShortcut}" />
+        <Button Grid.Column="3" IsVisible="{Binding IsReview}" Command="{Binding NewSessionCommand}"
+                Text="{x:Static theme:Strings.NewSession}" ImageSource="{DynamicResource IconPlus}" ContentLayout="Left,8" VerticalOptions="Center"
+                SemanticProperties.Description="{x:Static theme:Strings.NewSessionDescription}" ToolTipProperties.Text="{x:Static theme:Strings.NewSessionDescription}" />
+    </Grid>
+</ContentView>

@@ -1,0 +1,12 @@
+<Project Sdk="MSTest.Sdk/4.4.1">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TestingExtensionsProfile>None</TestingExtensionsProfile>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../../Orchid.Infrastructure/Orchid.Infrastructure.csproj" />
+        <ProjectReference Include="../../Orchid.Platform.Windows/Orchid.Platform.Windows.csproj" />
+    </ItemGroup>
+</Project>
