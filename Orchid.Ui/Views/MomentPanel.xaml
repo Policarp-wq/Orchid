@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.MomentPanel"
+             x:DataType="state:ReviewState">
+    <Border>
+        <Grid>
+            <!-- Beside the timeline: bar, beat and the held keys with their details. The slot takes the rest of the panel, whose height comes
+                 from the window, so 0 to 10 held keys never change it. -->
+            <Grid x:Name="Full" RowDefinitions="Auto,Auto,*" RowSpacing="{DynamicResource SpaceM}">
+                <Label Text="{x:Static theme:Strings.AtThisMoment}" Style="{StaticResource SectionLabel}" />
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="{DynamicResource SpaceXS}">
+                    <Label Text="{x:Static theme:Strings.Measure}" Style="{StaticResource SecondaryLabel}" />
+                    <Label Grid.Column="1" Text="{Binding BarText}" HorizontalTextAlignment="End" />
+                    <Label Grid.Row="1" Text="{x:Static theme:Strings.Beat}" Style="{StaticResource SecondaryLabel}" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding BeatText}" HorizontalTextAlignment="End" />
+                </Grid>
+                <controls:HeldSlot Grid.Row="2" HeightRequest="-1" ShowDetails="True" Notes="{Binding HeldChips, Mode=OneWay}" SustainedNotes="{Binding SustainedChips, Mode=OneWay}" />
+            </Grid>
+
+            <!-- Below the timeline: one line with reserved widths. -->
+            <Grid x:Name="Row" IsVisible="False" ColumnDefinitions="Auto,Auto,Auto,*" ColumnSpacing="{DynamicResource SpaceM}" VerticalOptions="Center">
+                <Label Text="{x:Static theme:Strings.Measure}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+                <Label Grid.Column="1" Text="{Binding BarText}" WidthRequest="40" VerticalTextAlignment="Center" />
+                <Label Grid.Column="2" Text="{Binding BeatText}" WidthRequest="64" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+                <Label Grid.Column="3" Text="{Binding HeldSummaryText}" LineBreakMode="TailTruncation" VerticalTextAlignment="Center"
+                       ToolTipProperties.Text="{Binding HeldSummaryText}" />
+            </Grid>
+        </Grid>
+    </Border>
+</ContentView>

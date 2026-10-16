@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    x:Class="Orchid.Ui.Theme.ColorTokens">
+    <!-- Tokens from docs/orchid-design/UI-SPEC.md. Drawings read the same tokens through Palette. -->
+    <Color x:Key="BackgroundLight">#D8D9DE</Color>
+    <Color x:Key="BackgroundDark">#141416</Color>
+    <Color x:Key="SurfaceLight">#E2E3E7</Color>
+    <Color x:Key="SurfaceDark">#1C1D21</Color>
+    <Color x:Key="SubtleSurfaceLight">#DBDCE1</Color>
+    <Color x:Key="SubtleSurfaceDark">#24252A</Color>
+    <Color x:Key="TextLight">#17181C</Color>
+    <Color x:Key="TextDark">#DCDDE2</Color>
+    <Color x:Key="TextSecondaryLight">#4A4D55</Color>
+    <Color x:Key="TextSecondaryDark">#A2A4AC</Color>
+    <Color x:Key="BorderLight">#C6C8CF</Color>
+    <Color x:Key="BorderDark">#34363D</Color>
+    <!-- Graphite neutrals for structure, steel for recorded notes, magenta only for "now": playhead, held notes, recording. -->
+    <Color x:Key="AccentLight">#A8164F</Color>
+    <Color x:Key="AccentDark">#E8619A</Color>
+    <Color x:Key="OnAccentLight">#F2EAEE</Color>
+    <Color x:Key="OnAccentDark">#2A0716</Color>
+    <Color x:Key="NoteFillLight">#C6CFDB</Color>
+    <Color x:Key="NoteFillDark">#2F3B4C</Color>
+    <Color x:Key="NoteStrokeLight">#4A6587</Color>
+    <Color x:Key="NoteStrokeDark">#8EA5C4</Color>
+    <Color x:Key="NoteTextLight">#22344B</Color>
+    <Color x:Key="NoteTextDark">#D8E1EE</Color>
+    <Color x:Key="SelectedFillLight">#A8164F</Color>
+    <Color x:Key="SelectedFillDark">#D24E83</Color>
+    <Color x:Key="SelectedStrokeLight">#6A0A32</Color>
+    <Color x:Key="SelectedStrokeDark">#F08DB5</Color>
+    <Color x:Key="SelectedTextLight">#F2EAEE</Color>
+    <Color x:Key="SelectedTextDark">#1A0510</Color>
+    <Color x:Key="GridBarLight">#3E4048</Color>
+    <Color x:Key="GridBarDark">#A9ABB3</Color>
+    <Color x:Key="GridBeatLight">#C2C5CD</Color>
+    <Color x:Key="GridBeatDark">#2E3036</Color>
+    <Color x:Key="GridTickLight">#7B7F89</Color>
+    <Color x:Key="GridTickDark">#6C6F79</Color>
+    <!-- ARGB: a translucent column over the strong beats. -->
+    <Color x:Key="StrongBeatTintLight">#123E4048</Color>
+    <Color x:Key="StrongBeatTintDark">#14A9ABB3</Color>
+    <Color x:Key="KeyRowLight">#D8DADF</Color>
+    <Color x:Key="KeyRowDark">#212227</Color>
+    <Color x:Key="BarLabelFillLight">#D0D2D8</Color>
+    <Color x:Key="BarLabelFillDark">#2C2D33</Color>
+    <Color x:Key="BarLabelTextLight">#26282E</Color>
+    <Color x:Key="BarLabelTextDark">#E1E2E7</Color>
+</ResourceDictionary>

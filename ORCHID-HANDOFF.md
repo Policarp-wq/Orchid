@@ -39,8 +39,8 @@ dotnet test --solution Orchid.slnx --no-build
 - Draft Application TimingStorage has 20 ms bins. Its concurrency and precision limitations are deliberately preserved.
 - tests/Orchid.AudioChecks is in the solution. Launch profiles: Orchid MIDI devices (`--midi-list`), Orchid MIDI recording (`--midi 0`), Orchid metronome (`--play`).
 - MIDI enumeration last detected `0: 5704PIA-DK`. Real note recording remains unverified.
-- Orchid.UiPreview is a standalone Windows MAUI window on sample data. It is not connected to real MIDI/storage/audio. It has persistent startup/managed exception logging and a Windows launcher.
-- UI specification and implementation DoD: docs/orchid-design. See docs/midi-input.md, docs/metronome-audio.md, Orchid.UiPreview/README.md and docs/development-state.md. Some older verification entries in development-state are historical.
+- Orchid.Windows is the Windows head of the MAUI UI library Orchid.Ui; it records from real MIDI with the metronome by default and runs on fakes with --fake. Storage is in memory only. It has persistent startup/managed exception logging and a Windows launcher.
+- UI specification and implementation DoD: docs/orchid-design. See docs/midi-input.md, docs/metronome-audio.md, Orchid.Windows/README.md and docs/development-state.md. Some older verification entries in development-state are historical.
 
 ## Current unresolved issue
 

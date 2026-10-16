@@ -25,9 +25,10 @@ MAUI supports these targets, with macOS using Mac Catalyst. See the
 The timeline and keyboard can use the supported
 [GraphicsView/IDrawable canvas](https://learn.microsoft.com/en-us/dotnet/maui/user-interface/graphics/?view=net-maui-10.0).
 
-`Orchid.UiPreview` started as the independent visual prototype (P0). It now composes
-the real MIDI input and metronome and is the Windows workspace executable that D7 is
-accepted against. Renaming the project is a separate decision.
+`Orchid.Windows` (named `Orchid.UiPreview` until 2026-10-16) started as the independent
+visual prototype (P0). It is the Windows head of the UI library `Orchid.Ui`, composes the
+real MIDI input and metronome, and is the Windows workspace executable that D7 is accepted
+against.
 
 The selected-time panel supersedes the older closest-grid comparison panel in
 `docs/ui-mvp-philosophy.md`. First delivery needs raw held-key state, time and
@@ -536,7 +537,8 @@ Reported: showing the timeline while recording makes no sense. Notes appear only
   readable scale it is fitted; otherwise the view starts at that minimum scale at the
   beginning. If the pitch range does not fit at the minimum lane height, lanes are at
   that minimum and the pitch axis scrolls (M1, Shift+wheel). Thresholds to agree;
-  proposal: 40 px per second and 8 px per lane.
+  proposal: 40 px per second and 4 px per lane (8 px did not fit A0 to C8 in the default
+  1240 x 900 window; thin lanes draw octave bands).
 - [ ] A Fit command (a button and Ctrl+0) restores this initial view at any time.
 - [ ] The pitch axis has no keyboard. A label column at the left names the lanes: every
   lane when lanes are tall, only C otherwise, and pitches held at the position are marked
@@ -720,7 +722,7 @@ The shared-clock rule under a stalled UI thread is a D2 item.
 - [ ] Baseline before any optimization: record UI-thread time per 20 ms refresh tick
   while recording and while playing back, plus page-scroll and timeline-pan
   smoothness, on the five-minute fixture below. Write the numbers and the machine
-  into the Orchid.UiPreview README. Every later item is judged against them.
+  into the Orchid.Windows README. Every later item is judged against them.
 - [ ] Budget during recording and playback on the reference PC: UI-thread work of
   one tick is at most 4 ms median and 16 ms at the 99th percentile, and no tick
   is skipped or queued behind another.

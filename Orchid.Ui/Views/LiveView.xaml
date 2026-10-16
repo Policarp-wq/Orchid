@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.LiveView"
+             x:DataType="state:LiveState">
+    <!-- The metronome is the dominant element, the held keys the second. Everything has a fixed size, so no note or count moves anything. -->
+    <VerticalStackLayout x:Name="Column" HorizontalOptions="Center" Spacing="{DynamicResource SpaceXL}">
+        <controls:BeatBars IsReadOnly="True" Beats="{Binding StrongBeats, Mode=OneWay}" CurrentBeat="{Binding CurrentBeat, Mode=OneWay}"
+                           BlockMaxWidth="{DynamicResource LiveBeatBlockMaxWidth}" BlockHeight="{DynamicResource LiveBeatBlockHeight}" />
+
+        <Grid HeightRequest="{DynamicResource LiveCountHeight}">
+            <Label Text="{Binding CountText}" IsVisible="{Binding IsCountIn}" Style="{StaticResource CountLabel}" HorizontalOptions="Center" VerticalOptions="Center" />
+            <Label Text="{Binding BarText}" IsVisible="{Binding IsRecordingPhase}" Style="{StaticResource DisplayLabel}" HorizontalOptions="Center" VerticalOptions="Center" />
+        </Grid>
+        <Grid>
+            <Label Text="{x:Static theme:Strings.LiveCountIn}" IsVisible="{Binding IsCountIn}" Style="{StaticResource SecondaryLabel}" HorizontalOptions="Center" />
+            <Label Text="{Binding BeatText}" IsVisible="{Binding IsRecordingPhase}" Style="{StaticResource SecondaryLabel}" HorizontalOptions="Center" />
+        </Grid>
+
+        <controls:HeldSlot Notes="{Binding HeldChips, Mode=OneWay}" HeightRequest="{DynamicResource LiveHeldSlotHeight}" />
+
+        <Label Text="{Binding PedalText}" Style="{StaticResource SecondaryLabel}" HorizontalOptions="Center" />
+    </VerticalStackLayout>
+</ContentView>

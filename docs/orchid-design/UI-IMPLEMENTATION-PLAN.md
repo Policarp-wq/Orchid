@@ -1,6 +1,6 @@
 # Orchid UI: implementation plan
 
-Status: plan, 2026-10-16. Nothing below exists yet unless a step says so. Requirements come from
+Status: phases 0-8 implemented on 2026-10-16; see "Implementation status" at the end. Phase 9 is not started. Requirements come from
 [UI-SPEC](UI-SPEC.md) and [IMPLEMENTATION-DOD](IMPLEMENTATION-DOD.md); this document decides how the
 UI code is split and in which order it is built. Item numbers (D7, D10 M5, ...) refer to the DoD.
 
@@ -37,19 +37,19 @@ Orchid.Ui                   NEW. MAUI class library. References no Orchid projec
   Layouts/                  AdaptiveHost, WideShell, CompactShell
   Platforms/Windows/        timeline wheel/pointer input, Escape and focus handling
 
-Orchid.UiPreview            the Windows head (renaming it is a separate decision, DoD intro)
+Orchid.Windows              the Windows head (named Orchid.UiPreview until 2026-10-16)
   App, MauiProgram          composition and lifetime only
   Backend/                  adapters: Platform.Windows -> Orchid.Ui contracts
   Platforms/Windows/        WinUI host, CrashLog hooks
 
 tests/Orchid.Ui.Tests       NEW. net10.0, everything pure in Orchid.Ui, fakes and fixtures
-tests/Orchid.UiPreview.Tests  head-only tests (CrashLog, adapters)
+tests/Orchid.Windows.Tests  head-only tests (CrashLog, adapters)
 ```
 
 Dependency rules:
 
 ```
-Orchid.UiPreview (head) ──> Orchid.Ui
+Orchid.Windows (head) ──> Orchid.Ui
         │                     (MAUI only)
         └──> Orchid.Platform.Windows ──> Application ──> Core
 ```
@@ -177,7 +177,7 @@ No MAUI types; doubles and records, fully unit-tested.
 | --- | --- | --- |
 | `NoteIndex` | Built once per recording: notes by attack, prefix maximum of releases, lowest/highest pitch, used pitches. `HeldAt(t)` (`attack <= t < release`) and `Visible(t0, t1, lanes)` without scanning all notes | D6, D9 |
 | `PitchMap` | Pitch to lane and back. One table of 128 entries: linear (Fit, Zoomed) or folded (only used pitches). The single pitch-to-y source | D10 M4 |
-| `TimelineCamera` | Time offset, pitch offset, px per second, px per lane, Locked/Free. `Fit`, `ZoomAt(anchor)`, `PanBy`, `Follow(position, anchor)`, clamping at the edges, limits (min readable 40 px/s and 8 px/lane, max 2,000 px/s and 64 px/lane, proposals) | D10 M1, M2, M4, M5 |
+| `TimelineCamera` | Time offset, pitch offset, px per second, px per lane, Locked/Free. `Fit`, `ZoomAt(anchor)`, `PanBy`, `Follow(position, anchor)`, clamping at the edges, limits (min readable 40 px/s and 4 px/lane, max 2,000 px/s and 64 px/lane, proposals) | D10 M1, M2, M4, M5 |
 | `TimelineTransform` | Camera + pitch map + viewport: `TimeToX`, `XToTime`, `PitchToY`, `YToPitch`. Used by drawing, hit testing, labels, ruler, playhead and overview frame | D10 M5 |
 | `GridModel` | Lines for a visible range from settings, pattern, subdivision and scale: time from the index (no drift), level (measure, strong, beat, subdivision), label, thinning below 12 px. Bar/beat at a position for the moment panel | D10 M6, D12 V2 |
 | `OverviewColumns` | Lowest/highest sounding pitch per pixel column, computed on load and on strip resize | D10 M2 |
@@ -299,7 +299,7 @@ Rules for every layout: flat `Grid`s, fixed or bounded panel sizes, no size chan
 timeline is the only element that takes the remaining space, safe areas respected. Another head may
 compose its own shell from the same views.
 
-## Head (`Orchid.UiPreview`, Windows)
+## Head (`Orchid.Windows`, Windows)
 
 - `MauiProgram`: builds `OrchidServices` (real or fake), `WorkspaceState`, registers fonts.
 - `App`: merges the library theme, applies head metric overrides, creates the window with
@@ -326,6 +326,10 @@ Windows, and the Windows run named in the phase. Requires a .NET 10 SDK on `PATH
   `Platforms/Windows/` partial compiles only for the Windows TFM; `PanGestureRecognizer` delivers
   mouse drags on Windows (decides how much of the pointer code stays Windows-only).
 - Done when the four answers are written into this plan.
+- Answers (2026-10-16, Windows SDK 10.0.102): a XAML `ContentView` and implicit styles from the library render in the head; the
+  library's `MauiFont` (lucide.ttf) resolves in the head, which still registers it with `AddFont("lucide.ttf", "Lucide")`; files in
+  `Platforms/Windows/` compile only for the Windows TFM; `PanGestureRecognizer` with a mouse on Windows was not verified, because
+  the Windows partial of `TimelineView` takes all pointer input over and the shared gestures are attached only elsewhere.
 
 ### 1. Move existing UI into the library (no behavior change)
 
@@ -406,4 +410,30 @@ the Windows adapters, not the UI library.
 | Renderer | `GraphicsView`; SkiaSharp only if the D9 baseline or rendering differences require it |
 | Live polling rate | Display refresh (about 60 Hz) while live; capture is independent of it |
 | One head per OS or one multi-target head | Decide at D8; the library supports both |
-| Head name | `Orchid.UiPreview` stays until the rename decision |
+| Head name | Decided 2026-10-16: `Orchid.UiPreview` was renamed to `Orchid.Windows` |
+
+## Implementation status (2026-10-16)
+
+Implemented in `Orchid.Ui` and `tests/Orchid.Ui.Tests`: contracts, fakes and all fixtures, state, timeline core, drawables and
+`TimelineView` with the Windows input partial, theme (`ColorTokens.xaml` instead of `Colors.xaml`, so the class does not clash with
+`Microsoft.Maui.Graphics.Colors`; `Metrics.xaml` with touch values in code-behind instead of `OnIdiom`; `Styles.xaml`; `Palette`;
+`Strings.resx` generated by MSBuild), the controls, views, `AdaptiveHost` and `WideShell`. The head composes fakes only and opens a
+fixture with `--fixture <name>`; `--theme light|dark` forces a theme. `PreviewSession`, `WorkspacePage` and the drawings were deleted.
+
+Deviations and decisions:
+
+- Phase 4: `Backend/WindowsMidiInputCatalog`, `WindowsRecorder` and `WindowsLiveSession` wrap `WindowsRecordingSession`;
+  `KeyPressPairing` pairs `KeyPressTiming`s into `NoteSpan`s. The real backend is the default, `--fake` selects the fakes. The
+  backend has no count-in yet, so the adapter reports its first clicks as the count-in and shifts offsets by that span. Real
+  recording was not verified: no MIDI input was connected to the machine during the check.
+- The banner slot under the header holds the "PERFORMANCE" heading of the mockup in review; a problem banner covers it, so the
+  slot never changes size. In Ready the banner sits at the top of the scrolling page.
+- `AdaptiveHost` keeps one suspended modal: a `SelectField` list opened from Grid settings replaces that modal and returns to it.
+- Compact uses the stacked wide arrangement until phase 9; the review toolbar then moves rare actions into an overflow modal.
+- Minimum lane height 4 px instead of 8 px (see D10 M4).
+
+Checked in the Windows window: Ready, count-in, recording with held keys, Stop into review and save, review of Narrow10s,
+WideA0ToC8 (fits without vertical scrolling), Pedal (strip and tails), Empty, ManyHeld (10 keys fit the moment panel), OneHour
+playback with Follow, light and dark themes, stacked layout below 960 px. Not checked: touch, pinch, pen, 200 % text scale,
+`SurfaceLimit600s` at maximum zoom, the keyboard focus trap and Tab cycle, Space and Ctrl+0, the notched-wheel and touchpad
+scenarios of D10 M1, and the D9 baseline. The working set with OneHour loaded was 320 MB during playback (D9 proposal: 300 MB).

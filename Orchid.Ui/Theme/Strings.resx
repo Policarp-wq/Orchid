@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="AppName" xml:space="preserve"><value>Orchid</value></data>
+  <data name="AppSubtitle" xml:space="preserve"><value>Rhythm practice</value></data>
+  <data name="WindowTitle" xml:space="preserve"><value>Orchid</value></data>
+  <data name="ModeReady" xml:space="preserve"><value>Ready</value></data>
+  <data name="ModeCountIn" xml:space="preserve"><value>Count-in</value></data>
+  <data name="ModeRecording" xml:space="preserve"><value>Recording</value></data>
+  <data name="ModeReview" xml:space="preserve"><value>Review</value></data>
+  <data name="SaveNotSaved" xml:space="preserve"><value>Not saved</value></data>
+  <data name="SaveSaving" xml:space="preserve"><value>Saving…</value></data>
+  <data name="SaveSaved" xml:space="preserve"><value>Saved</value></data>
+  <data name="SaveFailed" xml:space="preserve"><value>Not saved: save failed</value></data>
+  <data name="SessionSection" xml:space="preserve"><value>SESSION</value></data>
+  <data name="MidiInput" xml:space="preserve"><value>MIDI input</value></data>
+  <data name="MidiInputNone" xml:space="preserve"><value>No MIDI input</value></data>
+  <data name="RefreshInputs" xml:space="preserve"><value>Refresh MIDI inputs</value></data>
+  <data name="Tempo" xml:space="preserve"><value>Tempo</value></data>
+  <data name="Bpm" xml:space="preserve"><value>BPM</value></data>
+  <data name="BpmValue" xml:space="preserve"><value>{0} BPM</value></data>
+  <data name="Pulse" xml:space="preserve"><value>Pulse</value></data>
+  <data name="PulseValue" xml:space="preserve"><value>1/{0}</value></data>
+  <data name="PulseContext" xml:space="preserve"><value>1/{0} pulse</value></data>
+  <data name="Meter" xml:space="preserve"><value>Meter</value></data>
+  <data name="MeterValue" xml:space="preserve"><value>{0}/{1}</value></data>
+  <data name="StrongBeats" xml:space="preserve"><value>Strong beats</value></data>
+  <data name="Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="EditStrongBeats" xml:space="preserve"><value>Edit strong beats</value></data>
+  <data name="StrongNone" xml:space="preserve"><value>No strong beats</value></data>
+  <data name="StrongAll" xml:space="preserve"><value>Every beat is strong ({0})</value></data>
+  <data name="StrongOne" xml:space="preserve"><value>Beat {0} of {1}</value></data>
+  <data name="StrongMany" xml:space="preserve"><value>Beats {0} of {1}</value></data>
+  <data name="StrongBeatsHelp" xml:space="preserve"><value>A tall bar is a strong beat, a short bar is weak. Activate the top of a bar to switch it; any beat can be strong.</value></data>
+  <data name="BeatStrongDescription" xml:space="preserve"><value>Beat {0}: strong, activate to make it weak</value></data>
+  <data name="BeatWeakDescription" xml:space="preserve"><value>Beat {0}: weak, activate to make it strong</value></data>
+  <data name="BeatMakeWeakDescription" xml:space="preserve"><value>Beat {0}: make weak</value></data>
+  <data name="BeatStrongTooltip" xml:space="preserve"><value>Beat {0}: strong</value></data>
+  <data name="BeatWeakTooltip" xml:space="preserve"><value>Beat {0}: weak</value></data>
+  <data name="BeatCurrentDescription" xml:space="preserve"><value>Beat {0}: now</value></data>
+  <data name="CountIn" xml:space="preserve"><value>Count-in</value></data>
+  <data name="CountInOff" xml:space="preserve"><value>Off</value></data>
+  <data name="CountInOne" xml:space="preserve"><value>1 bar</value></data>
+  <data name="CountInMany" xml:space="preserve"><value>{0} bars</value></data>
+  <data name="StartSession" xml:space="preserve"><value>Start session</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="StopShortcut" xml:space="preserve"><value>Stop (Space)</value></data>
+  <data name="NoInputsHint" xml:space="preserve"><value>No MIDI inputs found. Connect a device and refresh.</value></data>
+  <data name="InputsReady" xml:space="preserve"><value>MIDI ready</value></data>
+  <data name="LastReview" xml:space="preserve"><value>LAST REVIEW</value></data>
+  <data name="PerformanceSection" xml:space="preserve"><value>PERFORMANCE</value></data>
+  <data name="OpenLastReview" xml:space="preserve"><value>Open review</value></data>
+  <data name="EmptyTitle" xml:space="preserve"><value>No sessions yet</value></data>
+  <data name="EmptyBody" xml:space="preserve"><value>Start a session to record your first performance, or open a saved log.</value></data>
+  <data name="OpenLog" xml:space="preserve"><value>Open log</value></data>
+  <data name="RecoveryTitle" xml:space="preserve"><value>Unfinished recording found</value></data>
+  <data name="RecoveryBody" xml:space="preserve"><value>The last session ended unexpectedly. Recover its recording?</value></data>
+  <data name="Recover" xml:space="preserve"><value>Recover</value></data>
+  <data name="Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="LiveBar" xml:space="preserve"><value>Bar {0}</value></data>
+  <data name="LiveBeat" xml:space="preserve"><value>Beat {0} of {1}</value></data>
+  <data name="LiveCountIn" xml:space="preserve"><value>Count-in</value></data>
+  <data name="PedalDown" xml:space="preserve"><value>Pedal down</value></data>
+  <data name="PedalUp" xml:space="preserve"><value>Pedal up</value></data>
+  <data name="LockedSettings" xml:space="preserve"><value>Settings locked while recording</value></data>
+  <data name="HeldNone" xml:space="preserve"><value>No keys held</value></data>
+  <data name="HeldSection" xml:space="preserve"><value>HELD</value></data>
+  <data name="SustainedSection" xml:space="preserve"><value>SUSTAINED BY PEDAL</value></data>
+  <data name="HeldDetails" xml:space="preserve"><value>MIDI {0} · {1} · {2}</value></data>
+  <data name="Play" xml:space="preserve"><value>Play</value></data>
+  <data name="Pause" xml:space="preserve"><value>Pause</value></data>
+  <data name="Rewind" xml:space="preserve"><value>Return to start</value></data>
+  <data name="ZoomTimeIn" xml:space="preserve"><value>Zoom in time</value></data>
+  <data name="ZoomTimeOut" xml:space="preserve"><value>Zoom out time</value></data>
+  <data name="ZoomPitchIn" xml:space="preserve"><value>Zoom in pitch</value></data>
+  <data name="ZoomPitchOut" xml:space="preserve"><value>Zoom out pitch</value></data>
+  <data name="Fit" xml:space="preserve"><value>Fit</value></data>
+  <data name="FitDescription" xml:space="preserve"><value>Fit the whole recording (Ctrl+0)</value></data>
+  <data name="Follow" xml:space="preserve"><value>Follow</value></data>
+  <data name="FollowOn" xml:space="preserve"><value>Camera follows the cursor</value></data>
+  <data name="FollowOff" xml:space="preserve"><value>Free camera: activate to follow the cursor</value></data>
+  <data name="Fold" xml:space="preserve"><value>Fold</value></data>
+  <data name="FoldDescription" xml:space="preserve"><value>Fold empty pitches</value></data>
+  <data name="FoldOnHint" xml:space="preserve"><value>Folded: lane distance is not the interval</value></data>
+  <data name="GridSettings" xml:space="preserve"><value>Grid settings</value></data>
+  <data name="More" xml:space="preserve"><value>More actions</value></data>
+  <data name="NoteCountOne" xml:space="preserve"><value>1 note</value></data>
+  <data name="NoteCountMany" xml:space="preserve"><value>{0} notes</value></data>
+  <data name="TimeTotal" xml:space="preserve"><value>/ {0}</value></data>
+  <data name="TimeScale" xml:space="preserve"><value>1 beat = {0} px</value></data>
+  <data name="AtThisMoment" xml:space="preserve"><value>AT THIS MOMENT</value></data>
+  <data name="MetronomePosition" xml:space="preserve"><value>METRONOME POSITION</value></data>
+  <data name="Measure" xml:space="preserve"><value>Measure</value></data>
+  <data name="Beat" xml:space="preserve"><value>Beat</value></data>
+  <data name="BeatOf" xml:space="preserve"><value>{0} of {1}</value></data>
+  <data name="NoValue" xml:space="preserve"><value>–</value></data>
+  <data name="LegendMeasure" xml:space="preserve"><value>Measure start</value></data>
+  <data name="LegendBeat" xml:space="preserve"><value>Metronome beat</value></data>
+  <data name="LegendStrong" xml:space="preserve"><value>Strong beat</value></data>
+  <data name="LegendSubdivision" xml:space="preserve"><value>Subdivision</value></data>
+  <data name="LegendNote" xml:space="preserve"><value>Recorded note</value></data>
+  <data name="LegendHeld" xml:space="preserve"><value>At playhead</value></data>
+  <data name="LegendPedal" xml:space="preserve"><value>Sustain pedal</value></data>
+  <data name="LegendSustain" xml:space="preserve"><value>Pedal tail</value></data>
+  <data name="GridSubdivision" xml:space="preserve"><value>Review subdivision</value></data>
+  <data name="GridShowSubdivisions" xml:space="preserve"><value>Show subdivisions</value></data>
+  <data name="GridShowStrong" xml:space="preserve"><value>Mark strong beats</value></data>
+  <data name="GridHelp" xml:space="preserve"><value>Grid settings change only the display, never the recording.</value></data>
+  <data name="On" xml:space="preserve"><value>On</value></data>
+  <data name="OffValue" xml:space="preserve"><value>Off</value></data>
+  <data name="SubdivisionValue" xml:space="preserve"><value>1/{0}</value></data>
+  <data name="ProblemMidiDisconnected" xml:space="preserve"><value>The MIDI input was disconnected. The recording ends where the device was lost.</value></data>
+  <data name="ProblemMidiUnavailable" xml:space="preserve"><value>The MIDI input is unavailable. Check the device and refresh.</value></data>
+  <data name="ProblemAudioFailed" xml:space="preserve"><value>Audio output failed. The metronome cannot play.</value></data>
+  <data name="ProblemSaveFailed" xml:space="preserve"><value>The recording could not be saved. It is kept in memory.</value></data>
+  <data name="ProblemDiskLow" xml:space="preserve"><value>Disk space is low.</value></data>
+  <data name="LoadMissing" xml:space="preserve"><value>The file was not found.</value></data>
+  <data name="LoadInvalid" xml:space="preserve"><value>The file is not a valid Orchid recording.</value></data>
+  <data name="LoadUnsupported" xml:space="preserve"><value>The file was made by a newer version of Orchid.</value></data>
+  <data name="Dismiss" xml:space="preserve"><value>Dismiss</value></data>
+  <data name="Retry" xml:space="preserve"><value>Retry</value></data>
+  <data name="StopRecording" xml:space="preserve"><value>Stop recording</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Choose" xml:space="preserve"><value>Choose</value></data>
+  <data name="EmptyRecording" xml:space="preserve"><value>No notes in this recording</value></data>
+  <data name="NotesAbove" xml:space="preserve"><value>▲ {0}</value></data>
+  <data name="NotesBelow" xml:space="preserve"><value>▼ {0}</value></data>
+  <data name="TimelineDescription" xml:space="preserve"><value>Recorded notes timeline. Drag to move, wheel to pan, Ctrl+wheel to zoom.</value></data>
+  <data name="PitchAxisDescription" xml:space="preserve"><value>Pitch labels</value></data>
+  <data name="OverviewDescription" xml:space="preserve"><value>Session position</value></data>
+  <data name="TimeSeconds" xml:space="preserve"><value>{0} s</value></data>
+  <data name="RecordingName" xml:space="preserve"><value>Recording {0}</value></data>
+  <data name="UnsavedName" xml:space="preserve"><value>New recording</value></data>
+  <data name="Milliseconds" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="NewSession" xml:space="preserve"><value>New session</value></data>
+  <data name="NewSessionDescription" xml:space="preserve"><value>Set up a new session</value></data>
+  <data name="LastReviewSummary" xml:space="preserve"><value>{0} · {1}</value></data>
+  <data name="SavedAs" xml:space="preserve"><value>{0}</value></data>
+  <data name="Elapsed" xml:space="preserve"><value>Elapsed</value></data>
+  <data name="TempoBpm" xml:space="preserve"><value>Tempo (BPM)</value></data>
+  <data name="FieldValue" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="DecreaseValue" xml:space="preserve"><value>Decrease {0}</value></data>
+  <data name="IncreaseValue" xml:space="preserve"><value>Increase {0}</value></data>
+</root>

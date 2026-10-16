@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.ReadyHome"
+             x:DataType="state:WorkspaceState">
+    <VerticalStackLayout Spacing="{DynamicResource SpaceM}">
+        <Border IsVisible="{Binding Status.HasRecovery}">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="{DynamicResource SpaceM}">
+                <VerticalStackLayout Spacing="{DynamicResource SpaceXS}" VerticalOptions="Center">
+                    <Label Text="{x:Static theme:Strings.RecoveryTitle}" FontAttributes="Bold" />
+                    <Label Text="{x:Static theme:Strings.RecoveryBody}" Style="{StaticResource SecondaryLabel}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Text="{x:Static theme:Strings.Recover}" Command="{Binding RecoverCommand}" VerticalOptions="Center" />
+                <Button Grid.Column="2" Text="{x:Static theme:Strings.Discard}" Command="{Binding DiscardRecoveryCommand}" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="{x:Static theme:Strings.LastReview}" Style="{StaticResource SectionLabel}" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="{x:Static theme:Strings.OpenLog}" ImageSource="{DynamicResource IconOpenLog}" ContentLayout="Left,8"
+                    Clicked="OnOpenLog" ToolTipProperties.Text="{x:Static theme:Strings.OpenLog}" />
+        </Grid>
+
+        <Border IsVisible="{Binding HasLastReview}">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource SpaceM}">
+                <VerticalStackLayout Spacing="{DynamicResource SpaceXS}" VerticalOptions="Center">
+                    <Label Text="{Binding Status.FileName}" Style="{StaticResource TitleLabel}" LineBreakMode="TailTruncation" ToolTipProperties.Text="{Binding Status.FileName}" />
+                    <Label Text="{Binding Review.SummaryText}" Style="{StaticResource SecondaryLabel}" />
+                </VerticalStackLayout>
+                <Button Grid.Column="1" Style="{StaticResource PrimaryButton}" Text="{x:Static theme:Strings.OpenLastReview}" Command="{Binding ShowReviewCommand}" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+
+        <Border IsVisible="{Binding HasNoLastReview}">
+            <VerticalStackLayout Spacing="{DynamicResource SpaceXS}">
+                <Label Text="{x:Static theme:Strings.EmptyTitle}" Style="{StaticResource TitleLabel}" />
+                <Label Text="{x:Static theme:Strings.EmptyBody}" Style="{StaticResource SecondaryLabel}" />
+            </VerticalStackLayout>
+        </Border>
+    </VerticalStackLayout>
+</ContentView>

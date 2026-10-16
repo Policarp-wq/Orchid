@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.StrongBeatsBody"
+             x:DataType="state:SetupState">
+    <VerticalStackLayout Spacing="{DynamicResource SpaceL}">
+        <controls:BeatBars Beats="{Binding StrongBeats, Mode=TwoWay}" IsReadOnly="{Binding IsLocked, Mode=OneWay}" />
+        <Label Text="{x:Static theme:Strings.StrongBeatsHelp}" Style="{StaticResource SecondaryLabel}" />
+    </VerticalStackLayout>
+</ContentView>

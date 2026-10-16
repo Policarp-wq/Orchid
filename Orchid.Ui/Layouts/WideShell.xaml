@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             xmlns:timeline="clr-namespace:Orchid.Ui.Timeline"
+             xmlns:views="clr-namespace:Orchid.Ui.Views"
+             x:Class="Orchid.Ui.Layouts.WideShell"
+             x:DataType="state:WorkspaceState">
+    <!-- Built once. A mode or a layout change only toggles visibility and grid positions; the timeline takes the remaining space. -->
+    <Grid RowDefinitions="Auto,*" RowSpacing="{DynamicResource SpaceM}" Padding="{DynamicResource PagePadding}"
+          BackgroundColor="{AppThemeBinding Light={StaticResource BackgroundLight}, Dark={StaticResource BackgroundDark}}">
+        <views:AppHeader />
+
+        <!-- Ready: setup and the last review; scrolls when the window is short. -->
+        <ScrollView Grid.Row="1" IsVisible="{Binding IsReady}">
+            <VerticalStackLayout Spacing="{DynamicResource SpaceM}">
+                <controls:StatusBanner Text="{Binding Status.BannerText}" ActionText="{Binding Status.BannerAction}" IsVisible="{Binding Status.HasBanner}"
+                                       ActionInvoked="OnBannerAction" />
+                <views:SetupPanel />
+                <views:ReadyHome />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Live: the metronome and the held keys. The banner slot has a fixed height, so a problem never moves the view below. -->
+        <Grid Grid.Row="1" IsVisible="{Binding IsLive}" RowDefinitions="Auto,*">
+            <Grid HeightRequest="{DynamicResource BannerSlotHeight}">
+                <controls:StatusBanner Text="{Binding Status.BannerText}" ActionText="{Binding Status.BannerAction}" IsVisible="{Binding Status.HasBanner}"
+                                       VerticalOptions="Center" ActionInvoked="OnBannerAction" />
+            </Grid>
+            <views:LiveView Grid.Row="1" BindingContext="{Binding Live}" VerticalOptions="Center" />
+        </Grid>
+
+        <!-- Review: toolbar, timeline and legend in one card; the moment panel beside it or below it. -->
+        <Grid Grid.Row="1" IsVisible="{Binding IsReview}" RowDefinitions="Auto,*" RowSpacing="{DynamicResource SpaceS}">
+            <!-- The performance heading of the mockup fills the fixed banner slot; a problem banner covers it, so nothing moves. -->
+            <Grid HeightRequest="{DynamicResource BannerSlotHeight}">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="{DynamicResource SpaceM}" VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="{DynamicResource SpaceXS}" VerticalOptions="Center">
+                        <Label Text="{x:Static theme:Strings.PerformanceSection}" Style="{StaticResource SectionLabel}" />
+                        <Label Text="{Binding Review.SummaryText}" Style="{StaticResource SecondaryLabel}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="{x:Static theme:Strings.OpenLog}" ImageSource="{DynamicResource IconOpenLog}" ContentLayout="Left,8"
+                            Clicked="OnOpenLog" VerticalOptions="Center" ToolTipProperties.Text="{x:Static theme:Strings.OpenLog}" />
+                </Grid>
+                <controls:StatusBanner Text="{Binding Status.BannerText}" ActionText="{Binding Status.BannerAction}" IsVisible="{Binding Status.HasBanner}"
+                                       VerticalOptions="Center" ActionInvoked="OnBannerAction" />
+            </Grid>
+            <Grid x:Name="ReviewBody" Grid.Row="1" ColumnDefinitions="*,Auto" RowDefinitions="*,Auto" ColumnSpacing="{DynamicResource SpaceL}">
+                <Border x:Name="TimelineCard">
+                    <Grid RowDefinitions="Auto,*,Auto" RowSpacing="{DynamicResource SpaceM}" BindingContext="{Binding Review}">
+                        <views:ReviewToolbar x:Name="Toolbar" />
+                        <timeline:TimelineView Grid.Row="1" />
+                        <views:Legend Grid.Row="2" />
+                    </Grid>
+                </Border>
+                <views:MomentPanel x:Name="Moment" BindingContext="{Binding Review}" Grid.Column="1" />
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentView>

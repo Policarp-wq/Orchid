@@ -34,29 +34,23 @@ to C4. `StopwatchTimeProvider` supplies elapsed milliseconds. The old converter
 test fixture was updated only to the current KeyPress/KeyInteraction signatures.
 The tool is now included in `Orchid.slnx`, with launch profiles for listing MIDI
 inputs, recording device 0 and metronome playback. Rider can create run
-configurations from these profiles. For the native preview on the WSL share,
-the preview README documents an external tool using the existing local-copy
+configurations from these profiles. For the Windows app on the WSL share,
+the Windows README documents an external tool using the existing local-copy
 launcher. Actual Rider UI execution has not been validated.
 [Usage and intentional limitations](midi-input.md).
 
-`Orchid.UiPreview` is a Windows MAUI executable connected to real MIDI input and
-metronome audio through the existing Infrastructure/Application code. Start/Stop
-records through KeyListener and TimingStorage; elapsed time, the latest held note
-and key highlights are displayed during recording, with review after Stop.
-Display refresh copies the storage's 20 ms interval without changing storage.
-The timeline keeps fixed time/pitch scales, pinned labels and horizontal scrolling;
-piano key colors are independent of theme. File actions remain unavailable.
-Sample-based model tests are retained, but no demo notes
-appear in the window. Window size changes move the detail panel below the
-timeline; theme styles also cover native input text. See the
-[integration checkpoint](ui-recording-integration.md) for checks and known limits.
+`Orchid.Windows` is the Windows head of the MAUI UI library `Orchid.Ui`. It records from a real MIDI input
+through adapters over `WindowsRecordingSession` by default, or runs on fakes with `--fake`; recordings stay in
+memory. The timeline uses a virtual camera with fit, zoom, pan and follow, a pitch label column instead of the
+keyboard, and an overview strip instead of the slider. See the [Windows README](../Orchid.Windows/README.md) for
+the limits of the current backend.
 
 The Windows entry point installs AppDomain/task diagnostics before WinUI starts,
 logs exceptions reaching `Main` and subscribes to WinUI's unhandled-exception
-event. Logs persist under `%LOCALAPPDATA%\Orchid\UiPreview\Logs`, with timestamps,
+event. Logs persist under `%LOCALAPPDATA%\Orchid\Logs`, with timestamps,
 PID/thread, source and full available exception details. Native termination before
 the handlers run requires Windows crash diagnostics. No logging package or
-container was added. [Launch instructions and limitations](../Orchid.UiPreview/README.md).
+container was added. [Launch instructions and limitations](../Orchid.Windows/README.md).
 
 `Metronome` advances one beat at a time and keeps absolute deadlines. Overdue
 beats execute immediately instead of being dropped. Waiting is separated into

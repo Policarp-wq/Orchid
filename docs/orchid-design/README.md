@@ -8,7 +8,7 @@ Copy this entire folder into the main Orchid repository, for example as `docs/ui
 2. Open [workspace-light.png](workspace-light.png) for the primary desktop layout.
 3. Open [mockup.html](mockup.html) in a modern browser and move **Session position**. The playhead, current-time details, and piano keys change together. Click a recorded note or use playback to inspect the same behavior.
 4. Read [IMPLEMENTATION-DOD.md](IMPLEMENTATION-DOD.md) for the current code gaps, required recording data and acceptance criteria. Its working-tree assessment is newer than the implementation snapshot in the UI specification.
-5. Run the independent [MAUI UI preview](../../Orchid.UiPreview/README.md) to inspect the Windows workspace on sample data without depending on the recording backend.
+5. Run the [Windows app](../../Orchid.Windows/README.md) to inspect the workspace with a real MIDI input, or with `--fake` and `--fixture <name>` on sample data without the recording backend.
 
 ## Files
 

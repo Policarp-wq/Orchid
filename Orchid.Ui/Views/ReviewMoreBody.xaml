@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             x:Class="Orchid.Ui.Views.ReviewMoreBody"
+             x:DataType="state:ReviewState">
+    <!-- The actions the compact toolbar leaves out. Each button keeps its meaning in its label, so no icon has to be guessed. -->
+    <VerticalStackLayout Spacing="{DynamicResource SpaceS}">
+        <Button Text="{x:Static theme:Strings.ZoomTimeOut}" ImageSource="{DynamicResource IconZoomOut}" ContentLayout="Left,8" Command="{Binding ZoomTimeOutCommand}" IsEnabled="{Binding CanZoomTimeOut}" />
+        <Button Text="{x:Static theme:Strings.ZoomTimeIn}" ImageSource="{DynamicResource IconZoomIn}" ContentLayout="Left,8" Command="{Binding ZoomTimeInCommand}" IsEnabled="{Binding CanZoomTimeIn}" />
+        <Button Text="{x:Static theme:Strings.ZoomPitchOut}" ImageSource="{DynamicResource IconMinus}" ContentLayout="Left,8" Command="{Binding ZoomPitchOutCommand}" IsEnabled="{Binding CanZoomPitchOut}" />
+        <Button Text="{x:Static theme:Strings.ZoomPitchIn}" ImageSource="{DynamicResource IconPlus}" ContentLayout="Left,8" Command="{Binding ZoomPitchInCommand}" IsEnabled="{Binding CanZoomPitchIn}" />
+        <Button Text="{x:Static theme:Strings.FitDescription}" ImageSource="{DynamicResource IconExpand}" ContentLayout="Left,8" Command="{Binding FitCommand}" />
+        <Button Text="{Binding FollowHint}" ImageSource="{DynamicResource IconFollow}" ContentLayout="Left,8" Command="{Binding FollowCommand}">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding IsFollowing}" Value="True">
+                    <Setter Property="BorderWidth" Value="2" />
+                    <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <Button Text="{Binding FoldHint}" ImageSource="{DynamicResource IconFold}" ContentLayout="Left,8" Command="{Binding FoldCommand}">
+            <Button.Triggers>
+                <DataTrigger TargetType="Button" Binding="{Binding IsFolded}" Value="True">
+                    <Setter Property="BorderWidth" Value="2" />
+                    <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+        <Button Text="{x:Static theme:Strings.GridSettings}" ImageSource="{DynamicResource IconSettings}" ContentLayout="Left,8" Clicked="OnGridSettings" />
+    </VerticalStackLayout>
+</ContentView>

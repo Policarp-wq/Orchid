@@ -123,43 +123,37 @@ Use explicit labels and a legend rather than color alone. The screenshots above 
 
 | Purpose | Token | Light | Dark |
 | --- | --- | --- | --- |
-| App background | `Background` | `#E3E4E8` | `#141416` |
-| Panel / field surface | `Surface` | `#EDEEF1` | `#1C1D21` |
-| Subtle surface | `SubtleSurface` | `#E6E7EB` | `#24252A` |
-| Main text | `Text` | `#17181C` | `#E6E7EB` |
-| Secondary text | `TextSecondary` | `#4D5058` | `#A2A4AC` |
+| App background | `Background` | `#D8D9DE` | `#141416` |
+| Panel / field surface | `Surface` | `#E2E3E7` | `#1C1D21` |
+| Subtle surface | `SubtleSurface` | `#DBDCE1` | `#24252A` |
+| Main text | `Text` | `#17181C` | `#DCDDE2` |
+| Secondary text | `TextSecondary` | `#4A4D55` | `#A2A4AC` |
 | Border | `Border` | `#C6C8CF` | `#34363D` |
-| "Now": playhead, overview playhead, Start/Stop, current beat, brand icon | `Accent` | `#C2185B` | `#FF6FA6` |
-| Text on accent | `OnAccent` | `#FFFFFF` | `#2A0716` |
-| Recorded-note fill | `NoteFill` | `#CDD6E2` | `#2F3B4C` |
+| "Now": playhead, overview playhead, Start/Stop, current beat, brand icon | `Accent` | `#A8164F` | `#E8619A` |
+| Text on accent | `OnAccent` | `#F2EAEE` | `#2A0716` |
+| Recorded-note fill | `NoteFill` | `#C6CFDB` | `#2F3B4C` |
 | Recorded-note outline | `NoteStroke` | `#4A6587` | `#8EA5C4` |
 | Recorded-note text | `NoteText` | `#22344B` | `#D8E1EE` |
-| Note held at the position: fill | `SelectedFill` | `#C2185B` | `#E0407F` |
-| Held note outline | `SelectedStroke` | `#7E0C3B` | `#FF9CC2` |
-| Held note text | `SelectedText` | `#FFFFFF` | `#1A0510` |
+| Note held at the position: fill | `SelectedFill` | `#A8164F` | `#D24E83` |
+| Held note outline | `SelectedStroke` | `#6A0A32` | `#F08DB5` |
+| Held note text | `SelectedText` | `#F2EAEE` | `#1A0510` |
 | Bar line, strong block of the beat bars | `GridBar` | `#3E4048` | `#A9ABB3` |
 | Beat line, line under C, ruler separator | `GridBeat` | `#C2C5CD` | `#2E3036` |
 | Subdivision ruler tick, weak block of the beat bars | `GridTick` | `#7B7F89` | `#6C6F79` |
 | Strong-beat column (ARGB) | `StrongBeatTint` | `#123E4048` | `#14A9ABB3` |
-| Black-key rows in the timeline | `KeyRow` | `#E2E4E9` | `#212227` |
-| Bar number plate | `BarLabelFill` | `#DADCE1` | `#2C2D33` |
+| Black-key rows in the timeline | `KeyRow` | `#D8DADF` | `#212227` |
+| Bar number plate | `BarLabelFill` | `#D0D2D8` | `#2C2D33` |
 | Bar number text | `BarLabelText` | `#26282E` | `#E1E2E7` |
-| White key | `KeyWhite` | `#F3F4F6` | `#CFD1D8` |
-| Black key | `KeyBlack` | `#2A2C33` | `#2A2C33` |
-| Key label | `KeyLabel` | `#2A2C33` | `#2A2C33` |
-| Held white key | `KeyHeld` | `#C2185B` | `#B0195A` |
-| Held black key | `KeyHeldBlack` | `#E0407F` | `#E0407F` |
-| Label on a held key | `KeyHeldText` | `#FFFFFF` | `#FFFFFF` |
 
 Contrast requirements, checked for every pair above:
 
 - Text and labels at least 4.5:1 against their background.
 - Note outlines, the playhead, bar lines, ruler ticks, held fills and controls at least 3:1 against the surface they sit on.
-- A held note differs from a recorded note by lightness, not only by hue, and stays distinguishable in a deuteranopia simulation (measured 4.0:1 light and 2.8:1 dark, 3.4:1 and 3.3:1 simulated).
+- A held note differs from a recorded note by lightness, not only by hue, and stays distinguishable in a deuteranopia simulation (measured 4.0:1 light and 2.8:1 dark, 3.4:1 and 3.3:1 simulated, with the 2026-10-06 values).
+- 2026-10-16: the accent, held colors, light surfaces and dark main text were toned down one step after the first window review found them too bright. WCAG ratios of the new values: text on accent 6.2:1 light and 5.8:1 dark, held text on held fill 6.2:1 and 4.8:1, accent on surface 5.7:1 and 5.3:1, held fill against recorded-note fill 4.6:1 and 2.8:1. The deuteranopia simulation was not repeated.
 - Light-theme surfaces are not pure white. Beat lines, key rows and note fills are deliberately faint; the bar line, the outlines and the tint carry the structure.
-- One magenta cannot contrast with both a light white key and a dark black key, so held keys have their own fills.
 
-Keep these as reusable theme resources (`Theme.xaml`, mirrored in `Orchid.Remote`). The `Key*` tokens serve the current keyboard drawing only and are removed with it; the held-pitch marks in the label column use `SelectedFill` and `SelectedText`.
+Keep these as reusable theme resources (`Orchid.Ui/Theme/ColorTokens.xaml`, mirrored in `Orchid.Remote/wwwroot/remote.css`). The `Key*` keyboard tokens were removed with the keyboard; the held-pitch marks in the label column use `SelectedFill` and `SelectedText`.
 
 Desktop reference sizes: about 22 logical pixels of content padding, 14-pixel body text, 11–12-pixel secondary labels, 22-pixel section titles, and 6–8-pixel control/panel corner radii. These are starting proportions, not fixed constraints. Use each platform's available system font rather than requiring Segoe UI everywhere. Support OS text scaling.
 
@@ -194,7 +188,7 @@ Relevant documentation:
 
 ## Shared components
 
-Two small components are specified once so every screen and device renders them the same way: the PC window, the phone remote and a future control panel. They hold no application data and know nothing about each other. Reference implementations: `Orchid.UiPreview/ModalDialog.cs` and `BeatBars.cs` (MAUI), `Orchid.Remote/wwwroot/components/modal.js` and `beat-bars.js` (web).
+Two small components are specified once so every screen and device renders them the same way: the PC window, the phone remote and a future control panel. They hold no application data and know nothing about each other. Reference implementations: `Orchid.Ui/Controls/ModalDialog.cs` and `BeatBars.cs` (MAUI), `Orchid.Remote/wwwroot/components/modal.js` and `beat-bars.js` (web).
 
 ### Modal
 
@@ -204,7 +198,7 @@ Two small components are specified once so every screen and device renders them 
 | Output | `closed` event after it closes, whatever the cause |
 | Look | A dimmed scrim over the whole window or screen and one card with the title, a close button and the body. Card is centered with a maximum width of 560 px; on a phone (width up to 640 px) it is a sheet attached to the bottom edge |
 | Dismiss | Close button, a click on the scrim, and Escape where a keyboard exists. A click inside the card never dismisses it |
-| Focus | Focus moves into the dialog on open and back to the opener on close, and Tab stays inside while it is open. The web version gets this from `<dialog>`; the MAUI preview does not trap focus yet |
+| Focus | Focus moves into the dialog on open and back to the opener on close, and Tab stays inside while it is open. The web version gets this from `<dialog>`; MAUI does it in `Orchid.Ui/Platforms/Windows/ModalDialog.Windows.cs` (Windows only so far) |
 | Rules | One modal at a time. It owns no data: the host passes content in and keeps the state. It is not navigation |
 | Touch | Close button at least 44 x 44 px |
 
@@ -217,7 +211,7 @@ Moving a setting to another screen or device means putting the same body content
 | Input | `beats`: array of booleans, one per beat of the measure, any length from 1 up. Also `disabled` |
 | Output | `beatsChanged(newBeats)` with a **new** array each time |
 | Look | One column per beat with its number under it. Each column has two blocks. A weak beat shows one filled soft block and an empty slot above it. A strong beat shows both blocks in the bar color (`GridBar`), so a strong beat is the tall bar; the weak block uses `GridTick`. Not the accent: magenta is reserved for "now" |
-| Layout | Columns share the width equally. A block is at most 56 px wide and stays at least 28 px; a long measure wraps onto further rows. The count is the length of `beats`, so 3, 4, 6, 8 and 16 beats all lay out without configuration. (The MAUI preview does not wrap yet; it is fine up to 8 beats at the preview's 560 px card) |
+| Layout | Columns share the width equally. A block is at most 56 px wide and stays at least 28 px; a long measure wraps onto further rows. The count is the length of `beats`, so 3, 4, 6, 8 and 16 beats all lay out without configuration. |
 | Interaction | The top block toggles the beat. The bottom block sets it to weak. Any beat may be strong, including none and all |
 | Accessibility | Top block name: "Beat 3: strong, activate to make it weak" (or weak / strong). Bottom block name: "Beat 3: make weak". Strong and weak differ by block count and fill, not by color alone. Blocks are at least 44 px tall on touch |
 | State | The component keeps nothing except the array it was given and the disabled flag. When the host sets a different length the bars are rebuilt |

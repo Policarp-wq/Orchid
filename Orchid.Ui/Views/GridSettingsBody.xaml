@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Orchid.Ui.Controls"
+             xmlns:state="clr-namespace:Orchid.Ui.State"
+             xmlns:theme="clr-namespace:Orchid.Ui.Theme"
+             xmlns:timeline="clr-namespace:Orchid.Ui.Timeline"
+             x:Class="Orchid.Ui.Views.GridSettingsBody"
+             x:DataType="state:ReviewState">
+    <VerticalStackLayout Spacing="{DynamicResource SpaceL}">
+        <VerticalStackLayout Spacing="{DynamicResource SpaceXS}">
+            <Label Text="{x:Static theme:Strings.GridSubdivision}" Style="{StaticResource SectionLabel}" />
+            <controls:SelectField x:Name="SubdivisionField" Title="{x:Static theme:Strings.GridSubdivision}" Items="{x:Static timeline:GridSettings.Subdivisions}"
+                                  SelectedItem="{Binding GridSettings.Subdivision, Mode=OneWay}" SelectionChanged="OnSubdivision" />
+        </VerticalStackLayout>
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="{x:Static theme:Strings.GridShowSubdivisions}" VerticalOptions="Center" />
+            <Switch Grid.Column="1" IsToggled="{Binding GridSettings.ShowSubdivisions, Mode=OneWay}" Toggled="OnShowSubdivisions"
+                    SemanticProperties.Description="{x:Static theme:Strings.GridShowSubdivisions}" />
+        </Grid>
+        <Grid ColumnDefinitions="*,Auto">
+            <Label Text="{x:Static theme:Strings.GridShowStrong}" VerticalOptions="Center" />
+            <Switch Grid.Column="1" IsToggled="{Binding GridSettings.ShowStrongBeats, Mode=OneWay}" Toggled="OnShowStrongBeats"
+                    SemanticProperties.Description="{x:Static theme:Strings.GridShowStrong}" />
+        </Grid>
+        <Label Text="{x:Static theme:Strings.GridHelp}" Style="{StaticResource SecondaryLabel}" />
+    </VerticalStackLayout>
+</ContentView>

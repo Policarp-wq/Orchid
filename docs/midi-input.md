@@ -64,7 +64,7 @@ returns, including its 20 ms grouping. To retain the console output:
 ```
 
 This is a diagnostic text log, not the production recording file format. The
-independent MAUI preview still uses its sample session.
+Windows app (`Orchid.Windows`) records through the same input path.
 
 ## Deliberately unchanged behavior
 

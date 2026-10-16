@@ -1,13 +1,13 @@
-/* Tokens from docs/orchid-design/UI-SPEC.md, same values as the desktop Theme.xaml. Status colors (live, warn, bad) are not chosen yet. */
+/* Tokens from docs/orchid-design/UI-SPEC.md, same values as Orchid.Ui/Theme/ColorTokens.xaml. Status colors (live, warn, bad) are not chosen yet. */
 :root {
-  --bg: #E3E4E8; --surface: #EDEEF1; --subtle: #E6E7EB; --text: #17181C; --muted: #4D5058;
-  --border: #C6C8CF; --accent: #C2185B; --on-accent: #FFFFFF;
+  --bg: #D8D9DE; --surface: #E2E3E7; --subtle: #DBDCE1; --text: #17181C; --muted: #4A4D55;
+  --border: #C6C8CF; --accent: #A8164F; --on-accent: #F2EAEE;
   --live: #2B5844; --live-bg: #DCEBE4; --warn: #754A17; --warn-bg: #F7DDBA; --bad: #9B2C3A;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #141416; --surface: #1C1D21; --subtle: #24252A; --text: #E6E7EB; --muted: #A2A4AC;
-    --border: #34363D; --accent: #FF6FA6; --on-accent: #2A0716;
+    --bg: #141416; --surface: #1C1D21; --subtle: #24252A; --text: #DCDDE2; --muted: #A2A4AC;
+    --border: #34363D; --accent: #E8619A; --on-accent: #2A0716;
     --live: #C3E3D0; --live-bg: #29473C; --warn: #FFE4BC; --warn-bg: #715133; --bad: #F2A3AE;
   }
 }
