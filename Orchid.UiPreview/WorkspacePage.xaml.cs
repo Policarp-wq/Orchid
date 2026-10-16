@@ -6,6 +6,7 @@ public partial class WorkspacePage : ContentPage
 {
     // Matches TimingStorage's current buffer interval.
     private const int BufferSizeMs = 20;
+    private const double WheelStepPixels = 80, DragThresholdPixels = 4;
     private readonly PreviewSession _session = new(TimeProvider.System);
     private readonly TimelineDrawing _timeline;
     private readonly IDispatcherTimer _timer;
@@ -15,10 +16,20 @@ public partial class WorkspacePage : ContentPage
     private CancellationTokenSource? _stopRecording;
     private (int Index, string Name)[] _devices = [];
     private bool _followingPlayhead;
+    // Set when the user pans away from the playhead; panning back to it, seeking, Play and Rewind resume following.
+    private bool _followPaused;
+    private double? _dragStartX;
+    private double _dragStartScroll;
+    private bool _dragged;
+    private readonly Microsoft.UI.Xaml.Input.PointerEventHandler _wheelHandler, _pressHandler, _moveHandler, _releaseHandler;
+    private Microsoft.UI.Xaml.UIElement? _inputView;
+    private bool[] _strongBeats = PreviewSession.DefaultStrongBeats(4);
 
     public WorkspacePage()
     {
         InitializeComponent();
+        (_wheelHandler, _pressHandler, _moveHandler, _releaseHandler) = (OnTimelineWheel, OnTimelinePressed, OnTimelineMoved, OnTimelineReleased);
+        TimelineViewport.HandlerChanged += (_, _) => AttachTimelineInput();
         _session.LoadRecording([], 0);
         _timeline = new TimelineDrawing(_session);
         Timeline.Drawable = _timeline;
@@ -27,6 +38,7 @@ public partial class WorkspacePage : ContentPage
         TimelineScroll.SizeChanged += (_, _) => UpdateTimelineLayout();
         Pulse.ItemsSource = new[] { "1/1", "1/2", "1/4", "1/8", "1/16" };
         Pulse.SelectedIndex = 2;
+        ResetAccents();
         ReviewGrid.ItemsSource = new[] { "1/4", "1/8", "1/16" };
         ReviewGrid.SelectedIndex = 1;
         _timer = Dispatcher.CreateTimer();
@@ -99,6 +111,7 @@ public partial class WorkspacePage : ContentPage
         {
             var bpm = int.Parse(Tempo.Text);
             var pulseDenominator = 1 << Pulse.SelectedIndex;
+            // Backend gap: Open does not take the strong-beat pattern yet, so clicks still accent only beat 1 (IMPLEMENTATION-DOD D2).
             recording = WindowsRecordingSession.Open(_devices[Device.SelectedIndex].Index, bpm, pulseDenominator);
             _recording = recording;
             recording.NoteReceived += (midi, interaction, milliseconds) => Dispatcher.Dispatch(() =>
@@ -107,8 +120,10 @@ public partial class WorkspacePage : ContentPage
                 _session.ReceiveLiveNote(midi, interaction, milliseconds / 1000.0);
             });
             _session.BeginRecording();
+            _followPaused = false;
             _session.Bpm = bpm;
             _session.PulseDenominator = pulseDenominator;
+            _session.StrongBeats = _strongBeats.ToArray();
             SessionButton.Text = "Stop";
             SessionButton.ImageSource = Icon("IconStop");
             SessionButton.IsEnabled = true;
@@ -151,6 +166,7 @@ public partial class WorkspacePage : ContentPage
         RefreshButton.IsEnabled = !recording;
         Tempo.IsEnabled = !recording;
         Pulse.IsEnabled = !recording;
+        EditAccentsButton.IsEnabled = !recording;
         Timeline.IsEnabled = !recording;
         PlayButton.IsEnabled = !recording && _session.Duration > 0;
         RewindButton.IsEnabled = !recording && _session.Duration > 0;
@@ -208,6 +224,8 @@ public partial class WorkspacePage : ContentPage
     private async Task FollowPlayhead(bool force = false)
     {
         if (_followingPlayhead || !IsLoaded || TimelineScroll.Width <= 0) return;
+        if (force) _followPaused = false;
+        else if (_followPaused) return;
         var x = _session.Position * TimelineDrawing.PixelsPerSecond;
         if (!force && x >= TimelineScroll.ScrollX && x < TimelineScroll.ScrollX + TimelineScroll.Width * .85) return;
         _followingPlayhead = true;
@@ -220,6 +238,7 @@ public partial class WorkspacePage : ContentPage
         if (_session.IsPlaying) PausePlayback(sender, args);
         else
         {
+            _followPaused = false;
             _session.Play();
             _timer.Start();
             UpdatePosition();
@@ -244,6 +263,7 @@ public partial class WorkspacePage : ContentPage
 
     private async void Rewind(object? sender, EventArgs args)
     {
+        _followPaused = false;
         _timer.Stop();
         _session.Seek(0);
         UpdatePosition();
@@ -251,6 +271,12 @@ public partial class WorkspacePage : ContentPage
     }
     private void SelectNote(object? sender, TappedEventArgs args)
     {
+        if (_dragged)
+        {
+            _dragged = false; // the release of a pan is not a click
+            return;
+        }
+        _followPaused = false;
         if (_recording is not null || args.GetPosition(Timeline) is not { } point ||
             _timeline.HitTest(new PointF((float)point.X, (float)point.Y)) is not { } note) return;
         _timer.Stop();
@@ -258,11 +284,111 @@ public partial class WorkspacePage : ContentPage
         UpdatePosition();
     }
 
+    // Moves the view by delta pixels from the given offset. The platform ScrollViewers swallow a vertical wheel
+    // without moving, so the wheel and the mouse drag are translated here.
+    private void PanTimeline(double from, double delta)
+    {
+        var target = TimelineDrawing.PanOffset((float)from, delta, (float)(TimelineExtent.WidthRequest - TimelineScroll.Width));
+        var playhead = _session.Position * TimelineDrawing.PixelsPerSecond;
+        _followPaused = playhead < target || playhead >= target + TimelineScroll.Width;
+        _ = TimelineScroll.ScrollToAsync(target, 0, false);
+    }
+
+    // MAUI's pointer gestures do not deliver PointerMoved here, so the timeline listens to the WinUI events directly.
+    // handledEventsToo: the inner ScrollViewers mark wheel and pointer events as handled even when they cannot use them.
+    private void AttachTimelineInput()
+    {
+        foreach (var (route, handler) in InputRoutes())
+            _inputView?.RemoveHandler(route, handler);
+        _inputView = TimelineViewport.Handler?.PlatformView as Microsoft.UI.Xaml.UIElement;
+        foreach (var (route, handler) in InputRoutes())
+            _inputView?.AddHandler(route, handler, true);
+    }
+
+    private IEnumerable<(Microsoft.UI.Xaml.RoutedEvent, Microsoft.UI.Xaml.Input.PointerEventHandler)> InputRoutes() =>
+    [
+        (Microsoft.UI.Xaml.UIElement.PointerWheelChangedEvent, _wheelHandler),
+        (Microsoft.UI.Xaml.UIElement.PointerPressedEvent, _pressHandler),
+        (Microsoft.UI.Xaml.UIElement.PointerMovedEvent, _moveHandler),
+        (Microsoft.UI.Xaml.UIElement.PointerReleasedEvent, _releaseHandler),
+        (Microsoft.UI.Xaml.UIElement.PointerCanceledEvent, _releaseHandler),
+    ];
+
+    private void OnTimelineWheel(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args)
+    {
+        var properties = args.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender).Properties;
+        if (properties.IsHorizontalMouseWheel) return; // the horizontal ScrollView already pans on its own
+        args.Handled = true;
+        PanTimeline(TimelineScroll.ScrollX, -properties.MouseWheelDelta / 120.0 * WheelStepPixels);
+    }
+
+    private void OnTimelinePressed(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args)
+    {
+        var point = args.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender);
+        // The scroll bar drags itself; only presses on the timeline content start a pan.
+        if (!point.Properties.IsLeftButtonPressed || IsInsideScrollBar(args.OriginalSource)) return;
+        _dragStartX = point.Position.X;
+        _dragStartScroll = TimelineScroll.ScrollX;
+        _dragged = false;
+    }
+
+    private void OnTimelineMoved(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args)
+    {
+        if (_dragStartX is not { } start) return;
+        var point = args.GetCurrentPoint((Microsoft.UI.Xaml.UIElement)sender);
+        if (!point.Properties.IsLeftButtonPressed)
+        {
+            _dragStartX = null; // the button was released where we could not see it
+            return;
+        }
+        var delta = start - point.Position.X;
+        if (!_dragged && Math.Abs(delta) < DragThresholdPixels) return;
+        _dragged = true;
+        PanTimeline(_dragStartScroll, delta);
+    }
+
+    private void OnTimelineReleased(object sender, Microsoft.UI.Xaml.Input.PointerRoutedEventArgs args) => _dragStartX = null;
+
+    private static bool IsInsideScrollBar(object? source)
+    {
+        for (var node = source as Microsoft.UI.Xaml.DependencyObject; node is not null; node = Microsoft.UI.Xaml.Media.VisualTreeHelper.GetParent(node))
+            if (node is Microsoft.UI.Xaml.Controls.Primitives.ScrollBar) return true;
+        return false;
+    }
+
     private void ChangeSettings(object? sender, EventArgs args)
     {
         if (!_ready) return;
         Tempo.Text = (int.TryParse(Tempo.Text, out var bpm) ? Math.Clamp(bpm, 30, 240) : 120).ToString();
         UpdatePosition();
+    }
+
+    private void ChangePulse(object? sender, EventArgs args)
+    {
+        if (!_ready) return;
+        ResetAccents();
+        ChangeSettings(sender, args);
+    }
+
+    // A new pulse changes the number of beats in the measure, so the pattern restarts with only the first beat strong.
+    private void ResetAccents()
+    {
+        _strongBeats = PreviewSession.DefaultStrongBeats(1 << Pulse.SelectedIndex);
+        ShowAccents();
+    }
+
+    private void ShowAccents()
+    {
+        AccentBars.Beats = _strongBeats;
+        AccentSummary.Text = PreviewSession.DescribeStrongBeats(_strongBeats);
+    }
+
+    private void OpenAccents(object? sender, EventArgs args) => AccentsDialog.Open();
+
+    private void AccentsChanged(object? sender, BeatsChangedEventArgs args)
+    {
+        _strongBeats = [.. args.Beats];
+        AccentSummary.Text = PreviewSession.DescribeStrongBeats(_strongBeats);
     }
 
     private void ChangeGrid(object? sender, EventArgs args)
@@ -278,10 +404,7 @@ public partial class WorkspacePage : ContentPage
         app.UserAppTheme = app.RequestedTheme == AppTheme.Dark ? AppTheme.Light : AppTheme.Dark;
     }
 
-    private static ImageSource Icon(string key) =>
-        Microsoft.Maui.Controls.Application.Current!.Resources.TryGetValue(key, out var icon) && icon is ImageSource source
-            ? source
-            : throw new InvalidOperationException($"Icon '{key}' is not defined in Theme.xaml.");
+    private static ImageSource Icon(string key) => ThemeResources.Get<ImageSource>(key);
 
     private void RepaintDrawings(object? sender, AppThemeChangedEventArgs args)
     {

@@ -17,6 +17,28 @@ public class PreviewSession(TimeProvider clock)
     public bool IsPlaying { get; private set; }
     public int Bpm { get; set; } = 120;
     public int PulseDenominator { get; set; } = 4;
+    // One flag per pulse of the measure (PulseDenominator pulses); true marks a strong beat.
+    public IReadOnlyList<bool> StrongBeats { get; set; } = DefaultStrongBeats(4);
+    public static bool[] DefaultStrongBeats(int pulses) => [.. Enumerable.Range(0, pulses).Select(pulse => pulse == 0)];
+
+    public static bool[] WithBeat(IReadOnlyList<bool> beats, int index, bool strong)
+    {
+        var copy = beats.ToArray();
+        copy[index] = strong;
+        return copy;
+    }
+
+    public static string DescribeStrongBeats(IReadOnlyList<bool> beats)
+    {
+        var strong = Enumerable.Range(0, beats.Count).Where(beat => beats[beat]).Select(beat => beat + 1).ToArray();
+        return strong.Length switch
+        {
+            0 => "No strong beats",
+            var count when count == beats.Count => $"Every beat is strong ({count})",
+            1 => $"Beat {strong[0]} of {beats.Count}",
+            _ => $"Beats {string.Join(", ", strong)} of {beats.Count}",
+        };
+    }
     public double PulseSeconds => 60.0 / Bpm;
     public double QuarterSeconds => PulseSeconds * PulseDenominator / 4;
     public IReadOnlyList<PreviewNote> Notes { get; private set; } = CreateNotes();

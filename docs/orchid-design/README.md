@@ -16,6 +16,7 @@ Copy this entire folder into the main Orchid repository, for example as `docs/ui
 | --- | --- |
 | `UI-SPEC.md` | Implementation handoff for the next agent |
 | `IMPLEMENTATION-DOD.md` | Independent prototype acceptance, integration gaps, required data and delivery criteria |
+| `UI-IMPLEMENTATION-PLAN.md` | UI library split, backend contracts and fakes, components, layouts and build phases |
 | `workspace-light.png` | Primary desktop composition, light theme |
 | `workspace-dark.png` | Same composition, dark theme |
 | `workspace-narrow.png` | Narrow-window reflow of the desktop composition |

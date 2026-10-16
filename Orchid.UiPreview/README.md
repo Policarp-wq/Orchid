@@ -13,8 +13,20 @@ styles live in `Theme.xaml` (tokens from `docs/orchid-design/UI-SPEC.md`, Light/
 the timeline and keyboard drawings read the same tokens through `PreviewColors`, so
 piano keys and notes follow the theme. Icons are Lucide font glyphs
 (`Resources/Fonts/lucide.ttf`, ISC license in `docs/orchid-design/THIRD-PARTY-NOTICES.txt`).
+
+Strong beats: the setup panel shows a one-line summary and an Edit button. Edit opens a
+modal (`ModalDialog`) with `BeatBars`: one column per beat of the measure, a tall bar is a
+strong beat, any beat can be strong. Both components are app-agnostic (contract in
+UI-SPEC, "Shared components"). The pattern is kept in `PreviewSession.StrongBeats` and the
+timeline draws strong beats heavier. The metronome backend does not take the pattern yet
+(`WindowsRecordingSession.Open`), so clicks still accent only beat 1 until
+IMPLEMENTATION-DOD D2 is implemented. Known gaps: the modal does not trap focus or close on
+Escape, and `BeatBars` does not wrap onto a second row for long measures.
 The timeline keeps 160 pixels per second and 24 pixels per pitch row, with pinned
-pitch labels and horizontal scrolling following the playhead.
+pitch labels and horizontal scrolling following the playhead. The mouse wheel and a
+mouse drag pan the time axis (the platform scroll viewers ignore the vertical wheel, so
+`WorkspacePage` listens to the WinUI pointer events); panning away from the playhead pauses
+the follow, panning back to it resumes.
 
 ## Run on Windows
 
@@ -118,3 +130,7 @@ still fail, as they did before this integration. Native UI Start/Stop with
 5704PIA-DK completed, locked/unlocked controls and retained a 10.23-second empty
 recording. Physical key presses, disconnect and audible metronome quality were
 not verified. See [integration checkpoint](../docs/ui-recording-integration.md).
+
+2026-10-15: Windows SDK 10.0.102 builds the solution with zero warnings/errors;
+211 tests pass with one expected non-Windows-only skip. The MusicalNote invalid-enum
+failures above no longer occur. No window or hardware check was repeated.

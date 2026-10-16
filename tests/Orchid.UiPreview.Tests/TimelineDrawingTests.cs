@@ -43,6 +43,22 @@ public class TimelineDrawingTests
     }
 
     [TestMethod]
+    [DataRow(0f, 80.0, 430f, 80f)]
+    [DataRow(400f, 80.0, 430f, 430f)]
+    [DataRow(50f, -80.0, 430f, 0f)]
+    [DataRow(10f, 5.0, -5f, 0f)]
+    public void PanOffset_StaysInsideTheScrollableRange(float current, double delta, float max, float expected)
+    {
+        // Arrange
+
+        // Act
+        var actual = TimelineDrawing.PanOffset(current, delta, max);
+
+        // Assert
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
     public void HitTest_UsesScrolledViewportCoordinates()
     {
         // Arrange

@@ -3,41 +3,63 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     x:Class="Orchid.UiPreview.Theme">
     <!-- Tokens from docs/orchid-design/UI-SPEC.md. Drawings read the same tokens through PreviewColors. -->
-    <Color x:Key="BackgroundLight">#F6F5F8</Color>
-    <Color x:Key="BackgroundDark">#17171D</Color>
-    <Color x:Key="SurfaceLight">#FFFFFF</Color>
-    <Color x:Key="SurfaceDark">#202027</Color>
-    <Color x:Key="SubtleSurfaceLight">#F0EFF4</Color>
-    <Color x:Key="SubtleSurfaceDark">#292932</Color>
-    <Color x:Key="TextLight">#292735</Color>
-    <Color x:Key="TextDark">#E9E7EF</Color>
-    <Color x:Key="TextSecondaryLight">#706B7D</Color>
-    <Color x:Key="TextSecondaryDark">#AAA5B8</Color>
-    <Color x:Key="BorderLight">#E4E1EB</Color>
-    <Color x:Key="BorderDark">#383640</Color>
-    <Color x:Key="AccentLight">#755B9B</Color>
-    <Color x:Key="AccentDark">#C1A8E4</Color>
+    <Color x:Key="BackgroundLight">#E3E4E8</Color>
+    <Color x:Key="BackgroundDark">#141416</Color>
+    <Color x:Key="SurfaceLight">#EDEEF1</Color>
+    <Color x:Key="SurfaceDark">#1C1D21</Color>
+    <Color x:Key="SubtleSurfaceLight">#E6E7EB</Color>
+    <Color x:Key="SubtleSurfaceDark">#24252A</Color>
+    <Color x:Key="TextLight">#17181C</Color>
+    <Color x:Key="TextDark">#E6E7EB</Color>
+    <Color x:Key="TextSecondaryLight">#4D5058</Color>
+    <Color x:Key="TextSecondaryDark">#A2A4AC</Color>
+    <Color x:Key="BorderLight">#C6C8CF</Color>
+    <Color x:Key="BorderDark">#34363D</Color>
+    <!-- Graphite neutrals for structure, steel for recorded notes, magenta only for "now": playhead, held notes and keys, recording. -->
+    <Color x:Key="AccentLight">#C2185B</Color>
+    <Color x:Key="AccentDark">#FF6FA6</Color>
     <Color x:Key="OnAccentLight">#FFFFFF</Color>
-    <Color x:Key="OnAccentDark">#21142E</Color>
-    <Color x:Key="NoteFillLight">#DCEBE4</Color>
-    <Color x:Key="NoteFillDark">#29473C</Color>
-    <Color x:Key="NoteTextLight">#2B5844</Color>
-    <Color x:Key="NoteTextDark">#C3E3D0</Color>
-    <Color x:Key="SelectedFillLight">#F7DDBA</Color>
-    <Color x:Key="SelectedFillDark">#715133</Color>
-    <Color x:Key="SelectedTextLight">#754A17</Color>
-    <Color x:Key="SelectedTextDark">#FFE4BC</Color>
-    <Color x:Key="MeasureLineLight">#B59A56</Color>
-    <Color x:Key="MeasureLineDark">#BBAA71</Color>
-    <Color x:Key="SubdivisionLineLight">#CBD8E7</Color>
-    <Color x:Key="SubdivisionLineDark">#394454</Color>
-    <!-- Piano keys are not in the spec table; the dark ivory is sampled from workspace-dark.png. -->
-    <Color x:Key="KeyWhiteLight">#FFFFFF</Color>
-    <Color x:Key="KeyWhiteDark">#D9D6E2</Color>
-    <Color x:Key="KeyBlackLight">#393542</Color>
-    <Color x:Key="KeyBlackDark">#393542</Color>
-    <Color x:Key="KeyLabelLight">#292735</Color>
-    <Color x:Key="KeyLabelDark">#292735</Color>
+    <Color x:Key="OnAccentDark">#2A0716</Color>
+    <Color x:Key="NoteFillLight">#CDD6E2</Color>
+    <Color x:Key="NoteFillDark">#2F3B4C</Color>
+    <Color x:Key="NoteStrokeLight">#4A6587</Color>
+    <Color x:Key="NoteStrokeDark">#8EA5C4</Color>
+    <Color x:Key="NoteTextLight">#22344B</Color>
+    <Color x:Key="NoteTextDark">#D8E1EE</Color>
+    <Color x:Key="SelectedFillLight">#C2185B</Color>
+    <Color x:Key="SelectedFillDark">#E0407F</Color>
+    <Color x:Key="SelectedStrokeLight">#7E0C3B</Color>
+    <Color x:Key="SelectedStrokeDark">#FF9CC2</Color>
+    <Color x:Key="SelectedTextLight">#FFFFFF</Color>
+    <Color x:Key="SelectedTextDark">#1A0510</Color>
+    <Color x:Key="GridBarLight">#3E4048</Color>
+    <Color x:Key="GridBarDark">#A9ABB3</Color>
+    <Color x:Key="GridBeatLight">#C2C5CD</Color>
+    <Color x:Key="GridBeatDark">#2E3036</Color>
+    <Color x:Key="GridTickLight">#7B7F89</Color>
+    <Color x:Key="GridTickDark">#6C6F79</Color>
+    <!-- ARGB: a translucent column over the strong beats. -->
+    <Color x:Key="StrongBeatTintLight">#123E4048</Color>
+    <Color x:Key="StrongBeatTintDark">#14A9ABB3</Color>
+    <Color x:Key="KeyRowLight">#E2E4E9</Color>
+    <Color x:Key="KeyRowDark">#212227</Color>
+    <Color x:Key="BarLabelFillLight">#DADCE1</Color>
+    <Color x:Key="BarLabelFillDark">#2C2D33</Color>
+    <Color x:Key="BarLabelTextLight">#26282E</Color>
+    <Color x:Key="BarLabelTextDark">#E1E2E7</Color>
+    <Color x:Key="KeyWhiteLight">#F3F4F6</Color>
+    <Color x:Key="KeyWhiteDark">#CFD1D8</Color>
+    <Color x:Key="KeyBlackLight">#2A2C33</Color>
+    <Color x:Key="KeyBlackDark">#2A2C33</Color>
+    <Color x:Key="KeyLabelLight">#2A2C33</Color>
+    <Color x:Key="KeyLabelDark">#2A2C33</Color>
+    <!-- One magenta cannot contrast with both a light white key and a dark black key, so held keys have their own fills. -->
+    <Color x:Key="KeyHeldLight">#C2185B</Color>
+    <Color x:Key="KeyHeldDark">#B0195A</Color>
+    <Color x:Key="KeyHeldBlackLight">#E0407F</Color>
+    <Color x:Key="KeyHeldBlackDark">#E0407F</Color>
+    <Color x:Key="KeyHeldTextLight">#FFFFFF</Color>
+    <Color x:Key="KeyHeldTextDark">#FFFFFF</Color>
 
     <x:Double x:Key="FontCaption">11</x:Double>
     <x:Double x:Key="FontSecondary">12</x:Double>
@@ -61,6 +83,7 @@
     <FontImageSource x:Key="IconOpenLog" FontFamily="Lucide" Glyph="&#xE247;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
     <FontImageSource x:Key="IconRecord" FontFamily="Lucide" Glyph="&#xE076;" Size="16" Color="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
     <FontImageSource x:Key="IconStop" FontFamily="Lucide" Glyph="&#xE167;" Size="16" Color="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
+    <FontImageSource x:Key="IconClose" FontFamily="Lucide" Glyph="&#xE1B2;" Size="16" Color="{AppThemeBinding Light={StaticResource TextLight}, Dark={StaticResource TextDark}}" />
     <FontImageSource x:Key="IconFlower" FontFamily="Lucide" Glyph="&#xE2D4;" Size="24" Color="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
 
     <Style TargetType="Label">
@@ -109,6 +132,22 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
+    <!-- Blocks of the beat bars: bar color = strong, tick color = the single block of a weak beat, empty = unused slot.
+         Not the accent: magenta is reserved for "now". -->
+    <Style x:Key="BeatBlockOn" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="HeightRequest" Value="28" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style x:Key="BeatBlockWeak" TargetType="Button" BasedOn="{StaticResource BeatBlockOn}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+    </Style>
+    <Style x:Key="BeatBlockOff" TargetType="Button" BasedOn="{StaticResource BeatBlockOn}">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+    </Style>
+
     <Style TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceLight}, Dark={StaticResource SurfaceDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
@@ -138,19 +177,23 @@
         <Setter Property="Margin" Value="0,0,16,4" />
     </Style>
     <Style x:Key="LegendMeasure" TargetType="BoxView">
-        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource MeasureLineLight}, Dark={StaticResource MeasureLineDark}}" />
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
         <Setter Property="WidthRequest" Value="2" />
         <Setter Property="HeightRequest" Value="12" />
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
     <Style x:Key="LegendBeat" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
-        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource TextSecondaryLight}, Dark={StaticResource TextSecondaryDark}}" />
-        <Setter Property="Opacity" Value="0.55" />
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridBeatLight}, Dark={StaticResource GridBeatDark}}" />
         <Setter Property="WidthRequest" Value="1" />
     </Style>
+    <Style x:Key="LegendStrong" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource StrongBeatTintLight}, Dark={StaticResource StrongBeatTintDark}}" />
+        <Setter Property="WidthRequest" Value="12" />
+    </Style>
     <Style x:Key="LegendSubdivision" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
-        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource SubdivisionLineLight}, Dark={StaticResource SubdivisionLineDark}}" />
+        <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
         <Setter Property="WidthRequest" Value="1" />
+        <Setter Property="HeightRequest" Value="6" />
     </Style>
     <Style x:Key="LegendNote" TargetType="BoxView" BasedOn="{StaticResource LegendMeasure}">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource NoteFillLight}, Dark={StaticResource NoteFillDark}}" />
