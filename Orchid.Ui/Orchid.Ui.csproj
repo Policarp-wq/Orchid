@@ -8,6 +8,9 @@
         <Nullable>enable</Nullable>
         <SupportedOSPlatformVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$(TargetFramework.Contains('-windows'))">10.0.17763.0</TargetPlatformMinVersion>
+        <!-- The outer multi-target evaluation imports no MAUI workload, so MauiVersion is empty there and an IDE restore that reads it
+             fails with NU1015. The per-framework builds still take the workload's version. -->
+        <MauiVersion Condition="'$(MauiVersion)' == ''">10.0.110</MauiVersion>
     </PropertyGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Orchid.Ui.Tests" />

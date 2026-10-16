@@ -14,8 +14,13 @@ public sealed class TimelineDrawable(ReviewState review) : IDrawable
 
     private const float MinLabelWidth = 36, TimeRowHeight = 13, PlateHeight = 14;
 
+    private const float HandleSize = 5, HotHandleSize = 7;
+
     /// <summary>Height of the pedal strip under the lanes; set by the view together with the viewport.</summary>
     public float PedalStripHeight { get; set; }
+
+    /// <summary>Set by the view while the pointer can grab the playhead.</summary>
+    public bool PlayheadHot { get; set; }
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
@@ -187,12 +192,21 @@ public sealed class TimelineDrawable(ReviewState review) : IDrawable
         }
     }
 
+    // The handle in the ruler shows that the playhead can be dragged; it grows while the pointer is over the playhead or the ruler.
     private void DrawPlayhead(ICanvas canvas, Palette palette, float height)
     {
         var x = X(review.Position.TotalSeconds);
+        var handle = PlayheadHot ? HotHandleSize : HandleSize;
         canvas.StrokeColor = palette.Accent;
-        canvas.StrokeSize = 2;
+        canvas.StrokeSize = PlayheadHot ? 3 : 2;
         canvas.DrawLine(x, 0, x, height);
+        var path = new PathF();
+        path.MoveTo(x - handle, 0);
+        path.LineTo(x + handle, 0);
+        path.LineTo(x, handle * 1.4f);
+        path.Close();
+        canvas.FillColor = palette.Accent;
+        canvas.FillPath(path);
     }
 
     internal static bool IsBlack(int midi) => midi % 12 is 1 or 3 or 6 or 8 or 10;

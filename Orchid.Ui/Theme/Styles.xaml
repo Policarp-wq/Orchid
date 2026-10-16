@@ -74,6 +74,18 @@
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource HoverSurfaceLight}, Dark={StaticResource HoverSurfaceDark}}" />
+                            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PressedSurfaceLight}, Dark={StaticResource PressedSurfaceDark}}" />
+                            <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource GridTickLight}, Dark={StaticResource GridTickDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.45" />
@@ -88,6 +100,28 @@
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnAccentLight}, Dark={StaticResource OnAccentDark}}" />
         <Setter Property="BorderColor" Value="Transparent" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentHoverLight}, Dark={StaticResource AccentHoverDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentPressedLight}, Dark={StaticResource AccentPressedDark}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.45" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
     </Style>
     <Style x:Key="IconButton" TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
         <Setter Property="WidthRequest" Value="{DynamicResource IconButtonSize}" />
@@ -95,8 +129,8 @@
     </Style>
 
     <!-- Blocks of the beat bars: bar color = strong, tick color = the single block of a weak beat, empty = unused slot.
-         The accent marks only the current beat of the live view: magenta is reserved for "now". A read-only bar is a disabled
-         button that keeps its colors. -->
+         The accent marks only the current beat of the live view: magenta is reserved for "now". Hover and press change only the
+         brightness, because the colors carry the strong/weak meaning; a read-only bar ignores input and keeps its colors. -->
     <Style x:Key="BeatBlockOn" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource GridBarLight}, Dark={StaticResource GridBarDark}}" />
         <Setter Property="CornerRadius" Value="4" />
@@ -105,6 +139,16 @@
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal" />
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.8" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.65" />
+                        </VisualState.Setters>
+                    </VisualState>
                     <VisualState x:Name="Disabled" />
                 </VisualStateGroup>
             </VisualStateGroupList>

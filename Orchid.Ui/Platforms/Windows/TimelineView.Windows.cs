@@ -18,7 +18,7 @@ public partial class TimelineView
     private enum OverviewDrag { None, Seek, Frame }
 
     private Point _pressed, _last;
-    private bool _pressing, _dragged;
+    private bool _pressing, _dragged, _scrubbing;
     private OverviewDrag _overviewDrag;
     private double _frameGrab;
 
@@ -31,6 +31,7 @@ public partial class TimelineView
         Listen(timeline, PointerRoutedHandler(OnTimelineReleased), UIElement.PointerReleasedEvent);
         Listen(timeline, PointerRoutedHandler(OnTimelineCanceled), UIElement.PointerCanceledEvent);
         Listen(timeline, PointerRoutedHandler(OnTimelineCanceled), UIElement.PointerCaptureLostEvent);
+        Listen(timeline, PointerRoutedHandler((_, _) => SetPlayheadHot(false)), UIElement.PointerExitedEvent);
         timeline.AddHandler(UIElement.KeyDownEvent, new KeyEventHandler(OnTimelineKey), true);
         Listen(overview, PointerRoutedHandler(OnOverviewPressed), UIElement.PointerPressedEvent);
         Listen(overview, PointerRoutedHandler(OnOverviewMoved), UIElement.PointerMovedEvent);
@@ -73,13 +74,39 @@ public partial class TimelineView
         _pressed = _last = point.Position;
         _pressing = true;
         _dragged = false;
+        // The ruler and the playhead itself drag the playhead; everywhere else a press is a click or a map drag.
+        _scrubbing = _review is { } review && (point.Position.Y < review.LaneTop || review.HitsPlayhead(point.Position.X));
+        if (_scrubbing) Scrub(point.Position.X);
+    }
+
+    private void Scrub(double x)
+    {
+        if (_review is { } review) review.ScrubTo(TimeSpan.FromSeconds(review.Transform.XToTime(x)));
+    }
+
+    private void SetPlayheadHot(bool hot)
+    {
+        if (_timelineDrawable is null || _timelineDrawable.PlayheadHot == hot) return;
+        _timelineDrawable.PlayheadHot = hot;
+        _timeline.Invalidate();
     }
 
     // Press and drag pans both axes like a map; under the threshold the press is a click that selects.
     private void OnTimelineMoved(UIElement sender, PointerRoutedEventArgs args)
     {
-        if (!_pressing || _review is not { } review) return;
+        if (_review is not { } review) return;
         var point = args.GetCurrentPoint(sender);
+        if (!_pressing)
+        {
+            SetPlayheadHot(point.Position.Y < review.LaneTop || review.HitsPlayhead(point.Position.X));
+            return;
+        }
+        if (_scrubbing)
+        {
+            if (point.Properties.IsLeftButtonPressed) Scrub(point.Position.X);
+            else _pressing = _scrubbing = false;
+            return;
+        }
         if (!point.Properties.IsLeftButtonPressed)
         {
             _pressing = false; // released where this element could not see it
@@ -97,6 +124,11 @@ public partial class TimelineView
         if (!_pressing) return;
         _pressing = false;
         sender.ReleasePointerCapture(args.Pointer);
+        if (_scrubbing)
+        {
+            _scrubbing = false;
+            return;
+        }
         if (!_dragged && _review is { } review)
         {
             var position = args.GetCurrentPoint(sender).Position;
@@ -104,7 +136,7 @@ public partial class TimelineView
         }
     }
 
-    private void OnTimelineCanceled(UIElement sender, PointerRoutedEventArgs args) => _pressing = false;
+    private void OnTimelineCanceled(UIElement sender, PointerRoutedEventArgs args) => _pressing = _scrubbing = false;
 
     private void OnTimelineKey(object sender, KeyRoutedEventArgs args)
     {

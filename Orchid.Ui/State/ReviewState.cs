@@ -11,7 +11,7 @@ namespace Orchid.Ui.State;
 /// </summary>
 public sealed class ReviewState : ObservableObject
 {
-    public const double ZoomStep = 1.5;
+    public const double ZoomStep = 1.5, PlayheadGrabPixels = 6;
     private static readonly RecordingData Nothing = new(new SessionSettings(120, 4, 4, 4, [true, false, false, false], 0), TimeSpan.Zero, [], []);
 
     private readonly TimeProvider _clock;
@@ -194,6 +194,21 @@ public sealed class ReviewState : ObservableObject
         Position = Clamp(position);
         Lock();
     }
+
+    /// <summary>
+    /// Dragging the playhead: moves the position and stops playback like a seek, but leaves the camera where it is, so the content does not
+    /// slide under the pointer.
+    /// </summary>
+    public void ScrubTo(TimeSpan position)
+    {
+        IsPlaying = false;
+        SelectedNote = null;
+        Position = Clamp(position);
+        Changed();
+    }
+
+    /// <summary>Whether x (in timeline pixels) is close enough to the playhead to grab it.</summary>
+    public bool HitsPlayhead(double x) => Math.Abs(x - Transform.TimeToX(Position.TotalSeconds)) <= PlayheadGrabPixels;
 
     public void Play()
     {

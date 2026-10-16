@@ -499,4 +499,54 @@ public class ReviewStateTests
         Assert.AreEqual(Display.Format(Strings.LastReviewSummary, review.NoteCountText, Display.Clock(Ms(1000))), summary);
         Assert.AreEqual(string.Join(" · ", Display.Format(Strings.BpmValue, 120), Display.Format(Strings.PulseContext, 4)), review.ContextText);
     }
+
+    [TestMethod]
+    public void ScrubTo_MovesThePlayheadWithoutMovingTheCamera()
+    {
+        // Arrange
+        var review = Loaded(new ManualClock(), Fixtures.FiveMinutes());
+        review.PanBy(4000, 0);
+        var offset = review.Camera.TimeOffset;
+
+        // Act
+        review.ScrubTo(TimeSpan.FromSeconds(offset + 3));
+
+        // Assert
+        Assert.AreEqual(offset, review.Camera.TimeOffset);
+        Assert.AreEqual(CameraMode.Free, review.Camera.Mode);
+        Assert.AreEqual(TimeSpan.FromSeconds(offset + 3), review.Position);
+    }
+
+    [TestMethod]
+    public void ScrubTo_StopsPlaybackAndClampsToTheRecording()
+    {
+        // Arrange
+        var review = Loaded(new ManualClock());
+        review.Play();
+
+        // Act
+        review.ScrubTo(TimeSpan.FromSeconds(5));
+
+        // Assert
+        Assert.IsFalse(review.IsPlaying);
+        Assert.AreEqual(review.Duration, review.Position);
+    }
+
+    [TestMethod]
+    [DataRow(0.0, true)]
+    [DataRow(ReviewState.PlayheadGrabPixels, true)]
+    [DataRow(ReviewState.PlayheadGrabPixels + 1, false)]
+    public void HitsPlayhead_GrabsOnlyNearTheLine(double distance, bool expected)
+    {
+        // Arrange
+        var review = Loaded(new ManualClock());
+        review.ScrubTo(Ms(500));
+        var x = review.Transform.TimeToX(.5);
+
+        // Act
+        var hit = review.HitsPlayhead(x + distance);
+
+        // Assert
+        Assert.AreEqual(expected, hit);
+    }
 }

@@ -45,10 +45,12 @@ after closing the app.
 
 In Rider, from a Windows checkout, use the launch profiles of `Properties/launchSettings.json`: they appear as run
 configurations `Orchid.Windows: Orchid (MIDI)`, `Orchid (fake input)`, `Orchid (review FiveMinutes)` and
-`Orchid (review OneHour, dark)`, run with the debugger attached, and set `DOTNET_ROOT` to `%USERPROFILE%\.dotnet`,
-because the apphost otherwise looks for .NET 10 only in `Program Files\dotnet`. Do not use a `UWP` run configuration:
-the head is unpackaged (`WindowsPackageType=None`). If the profiles do not start the app, check that Rider expands
-`%USERPROFILE%` in `environmentVariables`; that was not verified.
+`Orchid (review OneHour, dark)` and run with the debugger attached. Do not use a `UWP` run configuration: the head is
+unpackaged (`WindowsPackageType=None`). Rider builds with the .NET SDK it is configured with (Settings > Build,
+Execution, Deployment > Toolset and Build); that SDK needs the `maui-windows` workload, otherwise the build fails with
+NETSDK1147 naming some `maui-*` workload such as `maui-tizen`. The started apphost finds the .NET 10 runtime in
+`Program Files\dotnet`; with .NET 10 installed only under `%USERPROFILE%\.dotnet`, set `DOTNET_ROOT` in the run
+configuration.
 
 For a WSL checkout, add a local external tool under Settings > Tools > External Tools:
 
