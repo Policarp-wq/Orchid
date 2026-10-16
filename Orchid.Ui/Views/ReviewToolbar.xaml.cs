@@ -13,9 +13,27 @@ public partial class ReviewToolbar : ContentView
             var toolbar = (ReviewToolbar)bindable;
             toolbar.Tools.IsVisible = !(bool)compact;
             toolbar.More.IsVisible = (bool)compact;
+            toolbar.PlaceTools();
         });
 
-    public ReviewToolbar() => InitializeComponent();
+    public ReviewToolbar()
+    {
+        InitializeComponent();
+        SizeChanged += (_, _) => PlaceTools();
+    }
+
+    // Changes only with the window width, never with content: the transport has reserved widths.
+    private void PlaceTools()
+    {
+        if (Width <= 0) return;
+        var needed = Transport.Measure(double.PositiveInfinity, double.PositiveInfinity).Width + Root.ColumnSpacing
+            + Tools.Measure(double.PositiveInfinity, double.PositiveInfinity).Width;
+        var wrap = Tools.IsVisible && needed > Width;
+        Grid.SetRow(Tools, wrap ? 1 : 0);
+        Grid.SetColumn(Tools, wrap ? 0 : 1);
+        Grid.SetColumnSpan(Tools, wrap ? 2 : 1);
+        Tools.HorizontalOptions = wrap ? LayoutOptions.Start : LayoutOptions.End;
+    }
 
     public bool IsCompact
     {

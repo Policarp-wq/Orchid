@@ -20,7 +20,12 @@
             <Label Text="{x:Static theme:Strings.LegendStrong}" Style="{StaticResource SecondaryLabel}" />
         </HorizontalStackLayout>
         <HorizontalStackLayout Style="{StaticResource LegendItem}" IsVisible="{Binding GridSettings.ShowSubdivisions}">
-            <BoxView Style="{StaticResource LegendSubdivision}" />
+            <!-- Dotted like the subdivision lines of the timeline. -->
+            <VerticalStackLayout Spacing="3" VerticalOptions="Center">
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+                <BoxView Style="{StaticResource LegendSubdivision}" />
+            </VerticalStackLayout>
             <Label Text="{x:Static theme:Strings.LegendSubdivision}" Style="{StaticResource SecondaryLabel}" />
         </HorizontalStackLayout>
         <HorizontalStackLayout Style="{StaticResource LegendItem}">

@@ -15,6 +15,7 @@ public sealed class TimelineDrawable(ReviewState review) : IDrawable
     private const float MinLabelWidth = 36, TimeRowHeight = 13, PlateHeight = 14;
 
     private const float HandleSize = 5, HotHandleSize = 7;
+    private static readonly float[] SubdivisionDash = [1, 4];
 
     /// <summary>Height of the pedal strip under the lanes; set by the view together with the viewport.</summary>
     public float PedalStripHeight { get; set; }
@@ -80,6 +81,13 @@ public sealed class TimelineDrawable(ReviewState review) : IDrawable
         var pulseWidth = (float)(PulseSeconds * review.Camera.PxPerSecond);
         canvas.FillColor = palette.StrongBeatTint;
         foreach (var line in lines.Where(line => line.Strong)) canvas.FillRectangle(X(line.Time), top, pulseWidth, laneBottom - top);
+        // Subdivisions run the full height too, dashed, so the three levels stay distinct: bar, beat, subdivision.
+        canvas.StrokeColor = palette.GridTick;
+        canvas.StrokeSize = 1;
+        canvas.StrokeDashPattern = SubdivisionDash;
+        foreach (var line in lines.Where(line => line.Level == GridLevel.Subdivision))
+            canvas.DrawLine(X(line.Time), top, X(line.Time), laneBottom);
+        canvas.StrokeDashPattern = null;
         foreach (var line in lines)
         {
             if (line.Level == GridLevel.Subdivision) continue;

@@ -5,9 +5,11 @@
              xmlns:theme="clr-namespace:Orchid.Ui.Theme"
              x:Class="Orchid.Ui.Views.ReviewToolbar"
              x:DataType="state:ReviewState">
-    <!-- Numbers sit in reserved widths and the toolbar wraps instead of shrinking, so a changing time never moves a control. -->
-    <FlexLayout Wrap="Wrap" AlignItems="Center" AlignContent="Start">
-        <Button Style="{StaticResource IconButton}" Command="{Binding PlayPauseCommand}" Margin="0,0,8,4"
+    <!-- Numbers sit in reserved widths, so a changing time never moves a control. Transport on the left, tools on the right; when the
+         tools do not fit beside it, ReviewToolbar moves them to a second row (a wrapping FlexLayout reserved two rows even when one fitted). -->
+    <Grid x:Name="Root" ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" ColumnSpacing="{DynamicResource SpaceL}" RowSpacing="{DynamicResource SpaceS}">
+      <HorizontalStackLayout x:Name="Transport" Spacing="{DynamicResource SpaceS}" VerticalOptions="Center">
+        <Button Style="{StaticResource IconButton}" Command="{Binding PlayPauseCommand}"
                 SemanticProperties.Description="{Binding PlayPauseText}" ToolTipProperties.Text="{Binding PlayPauseText}">
             <Button.Triggers>
                 <DataTrigger TargetType="Button" Binding="{Binding IsPlaying}" Value="True">
@@ -18,13 +20,14 @@
                 </DataTrigger>
             </Button.Triggers>
         </Button>
-        <Button Style="{StaticResource IconButton}" Command="{Binding RewindCommand}" ImageSource="{DynamicResource IconRewind}" Margin="0,0,12,4"
+        <Button Style="{StaticResource IconButton}" Command="{Binding RewindCommand}" ImageSource="{DynamicResource IconRewind}" Margin="0,0,4,0"
                 SemanticProperties.Description="{x:Static theme:Strings.Rewind}" ToolTipProperties.Text="{x:Static theme:Strings.Rewind}" />
-        <Label Text="{Binding PositionText}" WidthRequest="{DynamicResource TimeReadoutWidth}" VerticalTextAlignment="Center" Margin="0,0,0,4" />
-        <Label Text="{Binding DurationText}" WidthRequest="{DynamicResource TimeReadoutWidth}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" Margin="0,0,12,4" />
-        <Label Text="{Binding NoteCountText}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" Margin="0,0,16,4" />
+        <Label Text="{Binding PositionText}" WidthRequest="{DynamicResource TimeReadoutWidth}" VerticalTextAlignment="Center" />
+        <Label Text="{Binding DurationText}" WidthRequest="{DynamicResource TimeReadoutWidth}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+        <Label Text="{Binding NoteCountText}" Style="{StaticResource SecondaryLabel}" VerticalTextAlignment="Center" />
+      </HorizontalStackLayout>
 
-        <HorizontalStackLayout x:Name="Tools" Spacing="{DynamicResource SpaceS}" Margin="0,0,0,4">
+        <HorizontalStackLayout x:Name="Tools" Grid.Column="1" HorizontalOptions="End" Spacing="{DynamicResource SpaceS}">
             <Button Style="{StaticResource IconButton}" Command="{Binding ZoomTimeOutCommand}" ImageSource="{DynamicResource IconZoomOut}" IsEnabled="{Binding CanZoomTimeOut}"
                     SemanticProperties.Description="{x:Static theme:Strings.ZoomTimeOut}" ToolTipProperties.Text="{x:Static theme:Strings.ZoomTimeOut}" />
             <Button Style="{StaticResource IconButton}" Command="{Binding ZoomTimeInCommand}" ImageSource="{DynamicResource IconZoomIn}" IsEnabled="{Binding CanZoomTimeIn}"
@@ -60,7 +63,7 @@
                     SemanticProperties.Description="{x:Static theme:Strings.GridSettings}" ToolTipProperties.Text="{x:Static theme:Strings.GridSettings}" />
         </HorizontalStackLayout>
 
-        <Button x:Name="More" Style="{StaticResource IconButton}" ImageSource="{DynamicResource IconMore}" Clicked="OnMore" IsVisible="False" Margin="0,0,0,4"
+        <Button x:Name="More" Style="{StaticResource IconButton}" ImageSource="{DynamicResource IconMore}" Clicked="OnMore" IsVisible="False" Grid.Column="1" HorizontalOptions="End"
                 SemanticProperties.Description="{x:Static theme:Strings.More}" ToolTipProperties.Text="{x:Static theme:Strings.More}" />
-    </FlexLayout>
+    </Grid>
 </ContentView>

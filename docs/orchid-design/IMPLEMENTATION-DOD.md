@@ -129,10 +129,10 @@ are ordered by group, not by number.
 | A. Capture and timing | D1, D2, D15 |
 | B. Device and session | D3, D4 |
 | C. Recording storage | D5 |
-| D. Desktop review and workspace | D6, D7, D10, D12 |
+| D. Desktop review and workspace | D6, D17, D7, D10, D12 |
 | E. Phones and tablets | D16, D8 |
 | F. Technical quality | D9, D14, D11 |
-| G. Follow-up | D13, [Remote](REMOTE-DOD.md) |
+| G. Follow-up | D13, D18, [Remote](REMOTE-DOD.md) |
 
 ## Closed
 
@@ -391,7 +391,28 @@ presentation state (currently `PreviewSession`).
 Here Playback means visual review, as implemented by the mockup. Audible replay
 of piano notes is an unresolved additional requirement. If included, it needs a
 note output/synthesizer contract and note lifecycle handling; `IBeatSoundPlayer`
-only plays metronome clicks and cannot provide that behavior.
+only plays metronome clicks and cannot provide that behavior. Audible note replay is D18.
+
+### D17. Metronome during review playback
+
+Requested in the window review of 2026-10-16. Playing back a recording can sound the metronome
+of that recording, so the timing can be judged by ear as well as by eye.
+
+- [ ] A toggle in the review toolbar turns the metronome on and off for playback; it is off by
+  default and its state is visible. Changing it during playback takes effect at the next click.
+- [ ] Clicks use the recording's own settings (BPM, pulse, meter, strong-beat pattern), not the
+  ones selected for the next session, and the strong click plays on flagged beats (D2).
+- [ ] Clicks are scheduled from the playback position on the session grid (D10 M6): a click at
+  grid time `t` sounds when the position reaches `t`. Seeking, Pause, Rewind and the end of the
+  recording stop pending clicks; Play from any position starts at the next grid click, without
+  a click for the position itself unless it is on a beat.
+- [ ] Deadlines come from the beat index and the playback clock, never from UI ticks, so a
+  stalled UI thread neither delays nor bunches clicks (same rule as D2).
+- [ ] The click output is the existing `IBeatSoundPlayer` behind a UI contract (Orchid.Ui stays
+  backend-free); the fakes get a recording click player for tests.
+- [ ] Tests: click times for every pulse option from position 0 and from a mid-measure
+  position, strong clicks from a non-default pattern, no clicks after Pause, seek or end, and
+  no drift over 3,600 s. A Windows check is recorded by ear on a real output device.
 
 ### D7. Desktop workspace shell
 
@@ -619,7 +640,7 @@ What the timeline draws today (read from the drawing code):
 | Layer | Drawn as |
 | --- | --- |
 | Pitch lanes | tinted black-key rows and a line under each C |
-| Review grid | ruler ticks at the chosen subdivision (1/4, 1/8, 1/16) |
+| Review grid | dotted full-height lines and ruler ticks at the chosen subdivision (1/4, 1/8, 1/16) |
 | Metronome pulses | a light vertical line for every click; strong beats as a tinted column |
 | Measures | a graphite bar line at each measure start and the bar number on a plate |
 | Labels | one row of seconds and one row of beat numbers |
@@ -829,6 +850,19 @@ one is supplied and the notes alone otherwise.
 - [ ] Tests over a fixture of named chords; the live view and review show the same label
   for the same held set.
 - [ ] Recognition never changes recorded data and never groups notes at capture (D3).
+
+### D18. Audible MIDI replay (long-term wish)
+
+Ideally playback also sounds the recorded notes. Not planned for a delivery; recorded here so
+the design does not block it.
+
+- [ ] A note-output contract (note on/off with pitch, velocity and channel, all notes off) with
+  an implementation per platform: a software synthesizer or SoundFont player, or a MIDI output
+  device. `IBeatSoundPlayer` only plays clicks and is not that contract.
+- [ ] Notes sound from their recorded attacks and releases, including pedal tails (D15), with
+  correct note lifecycle on seek, Pause and the end: no hanging notes.
+- [ ] It uses the same playback clock as the playhead and the D17 metronome, so notes and clicks
+  stay aligned. Velocity becomes meaningful only once capture keeps it (D1).
 
 ### Remote control
 
